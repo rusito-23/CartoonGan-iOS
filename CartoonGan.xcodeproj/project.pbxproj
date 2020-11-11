@@ -9,21 +9,27 @@
 /* Begin PBXBuildFile section */
 		7814D04B255C9DDA009D4571 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7814D04A255C9DDA009D4571 /* AppDelegate.swift */; };
 		7814D04D255C9DDA009D4571 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7814D04C255C9DDA009D4571 /* SceneDelegate.swift */; };
-		7814D04F255C9DDA009D4571 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7814D04E255C9DDA009D4571 /* ViewController.swift */; };
-		7814D052255C9DDA009D4571 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7814D050255C9DDA009D4571 /* Main.storyboard */; };
 		7814D054255C9DDC009D4571 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7814D053255C9DDC009D4571 /* Assets.xcassets */; };
 		7814D057255C9DDC009D4571 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7814D055255C9DDC009D4571 /* LaunchScreen.storyboard */; };
+		7814D067255C9FDB009D4571 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7814D066255C9FDB009D4571 /* RootViewController.swift */; };
+		7814D072255CA0E8009D4571 /* cartoongan_int8.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 7814D071255CA0E8009D4571 /* cartoongan_int8.tflite */; };
+		7814D076255CA100009D4571 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7814D075255CA100009D4571 /* RootView.swift */; };
+		E7CAD67B2041FD164A4998C9 /* Pods_CartoonGan.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8D0FD092D6C74887B871520 /* Pods_CartoonGan.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4880780A25A1FEE4D222736A /* Pods-CartoonGan.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CartoonGan.debug.xcconfig"; path = "Target Support Files/Pods-CartoonGan/Pods-CartoonGan.debug.xcconfig"; sourceTree = "<group>"; };
 		7814D047255C9DDA009D4571 /* CartoonGan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CartoonGan.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7814D04A255C9DDA009D4571 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7814D04C255C9DDA009D4571 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		7814D04E255C9DDA009D4571 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		7814D051255C9DDA009D4571 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7814D053255C9DDC009D4571 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7814D056255C9DDC009D4571 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7814D058255C9DDC009D4571 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7814D066255C9FDB009D4571 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
+		7814D071255CA0E8009D4571 /* cartoongan_int8.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = cartoongan_int8.tflite; sourceTree = "<group>"; };
+		7814D075255CA100009D4571 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		968E9615254DE1B4F4D51D29 /* Pods-CartoonGan.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CartoonGan.release.xcconfig"; path = "Target Support Files/Pods-CartoonGan/Pods-CartoonGan.release.xcconfig"; sourceTree = "<group>"; };
+		E8D0FD092D6C74887B871520 /* Pods_CartoonGan.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CartoonGan.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7CAD67B2041FD164A4998C9 /* Pods_CartoonGan.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,6 +49,8 @@
 			children = (
 				7814D049255C9DDA009D4571 /* CartoonGan */,
 				7814D048255C9DDA009D4571 /* Products */,
+				A2AD24FD8CA4BE6E5485C354 /* Pods */,
+				7D34594694736C2860A385DF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -56,15 +65,74 @@
 		7814D049255C9DDA009D4571 /* CartoonGan */ = {
 			isa = PBXGroup;
 			children = (
-				7814D04A255C9DDA009D4571 /* AppDelegate.swift */,
-				7814D04C255C9DDA009D4571 /* SceneDelegate.swift */,
-				7814D04E255C9DDA009D4571 /* ViewController.swift */,
-				7814D050255C9DDA009D4571 /* Main.storyboard */,
-				7814D053255C9DDC009D4571 /* Assets.xcassets */,
-				7814D055255C9DDC009D4571 /* LaunchScreen.storyboard */,
-				7814D058255C9DDC009D4571 /* Info.plist */,
+				7814D070255CA0CB009D4571 /* Model */,
+				7814D064255C9E91009D4571 /* Delegates */,
+				7814D074255CA0EC009D4571 /* View */,
+				7814D063255C9E80009D4571 /* ViewController */,
+				7814D05F255C9E5C009D4571 /* Support Files */,
 			);
 			path = CartoonGan;
+			sourceTree = "<group>";
+		};
+		7814D05F255C9E5C009D4571 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				7814D058255C9DDC009D4571 /* Info.plist */,
+				7814D055255C9DDC009D4571 /* LaunchScreen.storyboard */,
+				7814D053255C9DDC009D4571 /* Assets.xcassets */,
+			);
+			name = "Support Files";
+			sourceTree = "<group>";
+		};
+		7814D063255C9E80009D4571 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				7814D066255C9FDB009D4571 /* RootViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		7814D064255C9E91009D4571 /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				7814D04A255C9DDA009D4571 /* AppDelegate.swift */,
+				7814D04C255C9DDA009D4571 /* SceneDelegate.swift */,
+			);
+			path = Delegates;
+			sourceTree = "<group>";
+		};
+		7814D070255CA0CB009D4571 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				7814D071255CA0E8009D4571 /* cartoongan_int8.tflite */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		7814D074255CA0EC009D4571 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				7814D075255CA100009D4571 /* RootView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		7D34594694736C2860A385DF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E8D0FD092D6C74887B871520 /* Pods_CartoonGan.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A2AD24FD8CA4BE6E5485C354 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4880780A25A1FEE4D222736A /* Pods-CartoonGan.debug.xcconfig */,
+				968E9615254DE1B4F4D51D29 /* Pods-CartoonGan.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -74,6 +142,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7814D05B255C9DDC009D4571 /* Build configuration list for PBXNativeTarget "CartoonGan" */;
 			buildPhases = (
+				805B28EDD542ACBD3866618E /* [CP] Check Pods Manifest.lock */,
 				7814D043255C9DDA009D4571 /* Sources */,
 				7814D044255C9DDA009D4571 /* Frameworks */,
 				7814D045255C9DDA009D4571 /* Resources */,
@@ -124,21 +193,47 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7814D072255CA0E8009D4571 /* cartoongan_int8.tflite in Resources */,
 				7814D057255C9DDC009D4571 /* LaunchScreen.storyboard in Resources */,
 				7814D054255C9DDC009D4571 /* Assets.xcassets in Resources */,
-				7814D052255C9DDA009D4571 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		805B28EDD542ACBD3866618E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-CartoonGan-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		7814D043255C9DDA009D4571 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7814D04F255C9DDA009D4571 /* ViewController.swift in Sources */,
+				7814D076255CA100009D4571 /* RootView.swift in Sources */,
 				7814D04B255C9DDA009D4571 /* AppDelegate.swift in Sources */,
+				7814D067255C9FDB009D4571 /* RootViewController.swift in Sources */,
 				7814D04D255C9DDA009D4571 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -146,14 +241,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		7814D050255C9DDA009D4571 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				7814D051255C9DDA009D4571 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		7814D055255C9DDC009D4571 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -283,12 +370,14 @@
 		};
 		7814D05C255C9DDC009D4571 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4880780A25A1FEE4D222736A /* Pods-CartoonGan.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = V67S6WRV9Z;
 				INFOPLIST_FILE = CartoonGan/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -296,18 +385,20 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.rusito23.CartoonGan;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
 		7814D05D255C9DDC009D4571 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 968E9615254DE1B4F4D51D29 /* Pods-CartoonGan.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = V67S6WRV9Z;
 				INFOPLIST_FILE = CartoonGan/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -315,7 +406,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.rusito23.CartoonGan;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
