@@ -66,7 +66,7 @@ class CartoonGanModel {
 
     // MARK: - Methods
     
-    func process(with image: UIImage) {
+    func process(_ image: UIImage) {
         guard let data = preprocess(image) else {
             delegate?.model(self, didFailedProcessing: .preprocess)
             return

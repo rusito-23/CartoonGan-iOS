@@ -9,6 +9,7 @@ protocol ImagePickerControllerDelegate: class {
     func imagePicker(_ imagePicker: ImagePickerController, canUseGallery allowed: Bool)
     func imagePicker(_ imagePicker: ImagePickerController, didSelect image: UIImage)
     func imagePicker(_ imagePicker: ImagePickerController, didCancel cancel: Bool)
+    func imagePicker(_ imagePicker: ImagePickerController, didFail failed: Bool)
 }
 
 // MARK: - ImagePickerController
@@ -39,27 +40,27 @@ class ImagePickerController: NSObject {
 
     func cameraAccessRequest() {
         guard AVCaptureDevice.authorizationStatus(for: .video) !=  .authorized else {
-            DispatchQueue.main.async {
-                self.delegate?.imagePicker(self, canUseCamera: true)
-            }
+            main { self.delegate?.imagePicker(self, canUseCamera: true) }
             return
         }
         
         AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
             guard let self = self else { return }
-            DispatchQueue.main.async {
-                self.delegate?.imagePicker(self, canUseCamera: granted)
-            }
+            self.main { self.delegate?.imagePicker(self, canUseCamera: granted) }
         }
     }
 
     func photoGalleryAccessRequest() {
         PHPhotoLibrary.requestAuthorization { [weak self] result in
             guard let self = self else { return }
-            DispatchQueue.main.async {
-                self.delegate?.imagePicker(self, canUseGallery: result == .authorized)
-            }
+            self.main { self.delegate?.imagePicker(self, canUseGallery: result == .authorized) }
         }
+    }
+
+    // MARK: - Private methods
+
+    private func main(_ completion: @escaping(() -> ())) {
+        DispatchQueue.main.async(execute: completion)
     }
 }
 
@@ -73,17 +74,14 @@ extension ImagePickerController: UIImagePickerControllerDelegate, UINavigationCo
     ) {
         guard let image = info[.editedImage] as? UIImage else {
             log.warning("Failed to retrieve image")
+            main { self.delegate?.imagePicker(self, didFail: true) }
             return
         }
 
-        DispatchQueue.main.async {
-            self.delegate?.imagePicker(self, didSelect: image)
-        }
+        main { self.delegate?.imagePicker(self, didSelect: image) }
     }
 
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        DispatchQueue.main.async {
-            self.delegate?.imagePicker(self, didCancel: true)
-        }
+        main { self.delegate?.imagePicker(self, didCancel: true) }
     }
 }
