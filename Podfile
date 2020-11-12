@@ -4,5 +4,6 @@ target 'CartoonGan' do
     use_frameworks!
 
     pod 'TensorFlowLiteSwift'
+    pod 'SwiftyBeaver'
 
 end
