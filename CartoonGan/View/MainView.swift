@@ -6,7 +6,6 @@ class MainView: UIView {
     
     lazy var cameraButton: UIButton = {
         let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(.camera(scale: .large), for: .normal)
         button.titleLabel?.font = Font.paragraph
         button.layer.cornerRadius = Constants.Button.cornerRadius
@@ -19,7 +18,6 @@ class MainView: UIView {
     
     lazy var galleryButton: UIButton = {
         let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(.photo(scale: .large), for: .normal)
         button.titleLabel?.font = Font.paragraph
         button.layer.cornerRadius = Constants.Button.cornerRadius
@@ -32,7 +30,6 @@ class MainView: UIView {
 
     lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "CartoonGan"
         label.font = Font.title
         label.textColor = .white
@@ -43,7 +40,6 @@ class MainView: UIView {
 
     lazy var subtitleLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Please select an option below"
         label.font = Font.subtitle
         label.textColor = .white
