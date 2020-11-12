@@ -3,6 +3,14 @@ import UIKit
 
 class RootViewController: UIViewController {
     
+    // MARK: - Properties
+    
+    private lazy var imagePickerController: ImagePickerController = {
+        let imagePicker = ImagePickerController()
+        imagePicker.delegate = self
+        return imagePicker
+    }()
+    
     // MARK: - Views
     
     private lazy var rootView: RootView = RootView()
@@ -16,28 +24,50 @@ class RootViewController: UIViewController {
     }
     
     override func viewDidLoad() {
-        
-        cameraButton.addTarget(
-            self,
-            action: #selector(cameraButtonTapped),
-            for: .touchUpInside
-        )
-        
-        galleryButton.addTarget(
-            self,
-            action: #selector(galleryButtonTapped),
-            for: .touchUpInside
-        )
+        super.viewDidLoad()
+
+        cameraButton.addTarget(self, action: #selector(cameraButtonTapped), for: .touchUpInside)
+        galleryButton.addTarget(self, action: #selector(galleryButtonTapped), for: .touchUpInside)
     }
     
-    // MARK: - IBActions
+    // MARK: - Methods
     
     @objc func cameraButtonTapped() {
-        log.debug("Camera pressed!")
+        imagePickerController.cameraAccessRequest()
     }
     
     @objc func galleryButtonTapped() {
-        log.debug("Camera pressed!")
+        imagePickerController.photoGalleryAccessRequest()
     }
     
+    private func presentImagePicker(sourceType: UIImagePickerController.SourceType) {
+        imagePickerController.present(parent: self, sourceType: sourceType)
+    }
+
+}
+
+// MARK: - ImagePickerControllerDelegate
+
+extension RootViewController: ImagePickerControllerDelegate {
+    func imagePicker(_ imagePicker: ImagePickerController, canUseCamera accessIsAllowed: Bool) {
+        if accessIsAllowed {
+            presentImagePicker(sourceType: .camera)
+        }
+    }
+    
+    func imagePicker(_ imagePicker: ImagePickerController, canUseGallery accessIsAllowed: Bool) {
+        if accessIsAllowed {
+            presentImagePicker(sourceType: .photoLibrary)
+        }
+    }
+    
+    func imagePicker(_ imagePicker: ImagePickerController, didSelect image: UIImage) {
+        
+    }
+    
+    func imagePicker(_ imagePicker: ImagePickerController, didCancel cancel: Bool) {
+        if cancel {
+            imagePickerController.dismiss()
+        }
+    }
 }
