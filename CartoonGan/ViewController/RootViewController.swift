@@ -4,6 +4,8 @@ import UIKit
 class RootViewController: UIViewController {
     
     // MARK: - Properties
+
+    private var cartoonGanModel: CartoonGanModel?
     
     private lazy var imagePickerController: ImagePickerController = {
         let imagePicker = ImagePickerController()
@@ -28,9 +30,21 @@ class RootViewController: UIViewController {
 
         cameraButton.addTarget(self, action: #selector(cameraButtonTapped), for: .touchUpInside)
         galleryButton.addTarget(self, action: #selector(galleryButtonTapped), for: .touchUpInside)
+        initializeModel()
     }
     
     // MARK: - Methods
+
+    private func initializeModel() {
+        guard let model = CartoonGanModel(modelInfo: CartoonGanModelInfo.default) else {
+            log.error("Failed to initialize the model!")
+            // TODO: handle
+            return
+        }
+
+        model.delegate = self
+        self.cartoonGanModel = model
+    }
     
     @objc func cameraButtonTapped() {
         imagePickerController.cameraAccessRequest()
@@ -69,5 +83,17 @@ extension RootViewController: ImagePickerControllerDelegate {
         if cancel {
             imagePickerController.dismiss()
         }
+    }
+}
+
+// MARK: - CartoonGanModelDelegate
+
+extension RootViewController: CartoonGanModelDelegate {
+    func model(_ model: CartoonGanModel, didFinishProcessing image: UIImage) {
+
+    }
+
+    func model(_ model: CartoonGanModel, didFailedProcessing error: CartoonGanModelError) {
+        
     }
 }
