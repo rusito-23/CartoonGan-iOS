@@ -7,12 +7,11 @@ class RootView: UIView {
     lazy var cameraButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Camera", for: .normal)
-        button.setTitleColor(.gray, for: .highlighted)
+        button.setImage(.camera(scale: .large), for: .normal)
         button.titleLabel?.font = Font.paragraph
-        button.layer.cornerRadius = 16.0
+        button.layer.cornerRadius = Constants.Button.cornerRadius
         button.layer.borderColor = UIColor.white.cgColor
-        button.layer.borderWidth = 3
+        button.layer.borderWidth = Constants.Button.borderWidth
         button.backgroundColor = .black
         button.tintColor = .white;
         return button
@@ -21,52 +20,34 @@ class RootView: UIView {
     lazy var galleryButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Gallery", for: .normal)
-        button.setTitleColor(.gray, for: .highlighted)
+        button.setImage(.photo(scale: .large), for: .normal)
         button.titleLabel?.font = Font.paragraph
-        button.layer.cornerRadius = 16.0
+        button.layer.cornerRadius = Constants.Button.cornerRadius
         button.layer.borderColor = UIColor.white.cgColor
-        button.layer.borderWidth = 3
+        button.layer.borderWidth = Constants.Button.borderWidth
         button.backgroundColor = .black
         button.tintColor = .white
         return button
     }()
-
-    private lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = Font.title
-        label.textColor = .white
-        label.textAlignment = .center
-        label.numberOfLines = 0
-        label.attributedText = NSAttributedString(
-            string: "CartoonGan",
-            attributes: [
-                NSAttributedString.Key.strokeColor: UIColor.orange,
-                NSAttributedString.Key.foregroundColor: UIColor.white,
-                NSAttributedString.Key.strokeWidth: 4,
-                NSAttributedString.Key.font: Font.title
-            ]
-        )
-        return label
-    }()
     
-    private lazy var buttonContainer: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.isUserInteractionEnabled = true
-        view.addSubview(cameraButton)
-        view.addSubview(galleryButton)
-        return view
-    }()
+    // MARK: - Constants
+    
+    private struct Constants {
+        struct Button {
+            static let size: CGFloat = 80
+            static let cornerRadius: CGFloat = 40
+            static let spacing: CGFloat = 32.0
+            static let borderWidth: CGFloat = 3
+        }
+    }
     
     // MARK: - Initializers
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .black
-        addSubview(titleLabel)
-        addSubview(buttonContainer)
+        addSubview(cameraButton)
+        addSubview(galleryButton)
         setupConstraints()
     }
 
@@ -78,26 +59,15 @@ class RootView: UIView {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 32.0),
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16.0),
-            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16.0),
-
-            buttonContainer.heightAnchor.constraint(equalToConstant: 132.0),
-            buttonContainer.centerYAnchor.constraint(equalTo: centerYAnchor),
-            buttonContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 32.0),
-            buttonContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32.0),
-        ])
-        
-        NSLayoutConstraint.activate([
-            galleryButton.heightAnchor.constraint(equalToConstant: 50.0),
-            galleryButton.topAnchor.constraint(equalTo: buttonContainer.topAnchor),
-            galleryButton.trailingAnchor.constraint(equalTo: buttonContainer.trailingAnchor),
-            galleryButton.leadingAnchor.constraint(equalTo: buttonContainer.leadingAnchor),
+            galleryButton.heightAnchor.constraint(equalToConstant: Constants.Button.size),
+            galleryButton.widthAnchor.constraint(equalToConstant: Constants.Button.size),
+            galleryButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Constants.Button.spacing),
+            galleryButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Constants.Button.spacing),
             
-            cameraButton.heightAnchor.constraint(equalToConstant: 50.0),
-            cameraButton.topAnchor.constraint(equalTo: galleryButton.bottomAnchor, constant: 32.0),
-            cameraButton.trailingAnchor.constraint(equalTo: buttonContainer.trailingAnchor),
-            cameraButton.leadingAnchor.constraint(equalTo: buttonContainer.leadingAnchor),
+            cameraButton.heightAnchor.constraint(equalToConstant: Constants.Button.size),
+            cameraButton.widthAnchor.constraint(equalToConstant: Constants.Button.size),
+            cameraButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constants.Button.spacing),
+            cameraButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Constants.Button.spacing),
         ])
     }
 }

@@ -43,13 +43,7 @@ class ImagePickerController: NSObject {
     
     private func presentError(targetName: String) {
         log.error("Access request failed for target: \(targetName)")
-
-        DispatchQueue.main.async {
-            if let parent = self.parent {
-                // TODO: Add Error View
-                parent.present(UIViewController(), animated: true, completion: nil)
-            }
-        }
+        // TODO: Manage error
     }
 
     func cameraAccessRequest() {
