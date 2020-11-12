@@ -80,6 +80,7 @@ extension ViewController: ImagePickerControllerDelegate {
     }
     
     func imagePicker(_ imagePicker: ImagePickerController, didSelect image: UIImage) {
+        imagePicker.dismiss()
         guard let cartoonGanModel = cartoonGanModel else {
             log.error("Failed to initialize model!")
             showErrorDialog(message: "We won't be able to process the image")
@@ -90,12 +91,12 @@ extension ViewController: ImagePickerControllerDelegate {
     }
     
     func imagePicker(_ imagePicker: ImagePickerController, didCancel cancel: Bool) {
-        if cancel { imagePickerController.dismiss() }
+        if cancel { imagePicker.dismiss() }
     }
 
     func imagePicker(_ imagePicker: ImagePickerController, didFail failed: Bool) {
         if failed {
-            imagePickerController.dismiss()
+            imagePicker.dismiss()
             showErrorDialog(message: "We're having some issues to load your image!")
         }
     }

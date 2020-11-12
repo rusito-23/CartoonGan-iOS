@@ -39,7 +39,7 @@ class ImagePickerController: NSObject {
     // MARK: - Methods
 
     func cameraAccessRequest() {
-        guard AVCaptureDevice.authorizationStatus(for: .video) !=  .authorized else {
+        guard AVCaptureDevice.authorizationStatus(for: .video) != .authorized else {
             main { self.delegate?.imagePicker(self, canUseCamera: true) }
             return
         }
@@ -72,8 +72,8 @@ extension ImagePickerController: UIImagePickerControllerDelegate, UINavigationCo
         _ picker: UIImagePickerController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]
     ) {
-        guard let image = info[.editedImage] as? UIImage else {
-            log.warning("Failed to retrieve image")
+        guard let image = info[.originalImage] as? UIImage else {
+            log.error("Failed to retrieve image")
             main { self.delegate?.imagePicker(self, didFail: true) }
             return
         }
