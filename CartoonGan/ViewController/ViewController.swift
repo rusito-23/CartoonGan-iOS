@@ -1,7 +1,6 @@
 import UIKit
 
-
-class RootViewController: UIViewController {
+class ViewController: UIViewController {
     
     // MARK: - Properties
 
@@ -19,14 +18,14 @@ class RootViewController: UIViewController {
     
     // MARK: - Views
 
-    private lazy var rootView: RootView = RootView()
-    private var cameraButton: UIButton { rootView.cameraButton }
-    private var galleryButton: UIButton { rootView.galleryButton }
+    private lazy var mainView = MainView()
+    private var cameraButton: UIButton { mainView.cameraButton }
+    private var galleryButton: UIButton { mainView.galleryButton }
     
     // MARK: - View Lifecycle
     
     override func loadView() {
-        self.view = rootView
+        self.view = mainView
     }
     
     override func viewDidLoad() {
@@ -59,7 +58,7 @@ class RootViewController: UIViewController {
 
 // MARK: - ImagePickerControllerDelegate
 
-extension RootViewController: ImagePickerControllerDelegate {
+extension ViewController: ImagePickerControllerDelegate {
     func imagePicker(_ imagePicker: ImagePickerController, canUseCamera allowed: Bool) {
         guard allowed else {
             log.error("Camera access request failed!")
@@ -91,7 +90,7 @@ extension RootViewController: ImagePickerControllerDelegate {
 
 // MARK: - CartoonGanModelDelegate
 
-extension RootViewController: CartoonGanModelDelegate {
+extension ViewController: CartoonGanModelDelegate {
     func model(_ model: CartoonGanModel, didFinishProcessing image: UIImage) {
 
     }

@@ -1,6 +1,6 @@
 import UIKit
 
-class RootView: UIView {
+class MainView: UIView {
     
     // MARK: - Subviews
     

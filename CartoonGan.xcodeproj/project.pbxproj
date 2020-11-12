@@ -11,9 +11,9 @@
 		7814D04D255C9DDA009D4571 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7814D04C255C9DDA009D4571 /* SceneDelegate.swift */; };
 		7814D054255C9DDC009D4571 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7814D053255C9DDC009D4571 /* Assets.xcassets */; };
 		7814D057255C9DDC009D4571 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7814D055255C9DDC009D4571 /* LaunchScreen.storyboard */; };
-		7814D067255C9FDB009D4571 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7814D066255C9FDB009D4571 /* RootViewController.swift */; };
+		7814D067255C9FDB009D4571 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7814D066255C9FDB009D4571 /* ViewController.swift */; };
 		7814D072255CA0E8009D4571 /* cartoongan_int8.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 7814D071255CA0E8009D4571 /* cartoongan_int8.tflite */; };
-		7814D076255CA100009D4571 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7814D075255CA100009D4571 /* RootView.swift */; };
+		7814D076255CA100009D4571 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7814D075255CA100009D4571 /* MainView.swift */; };
 		78FBA327255CA3E2003EC30F /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FBA326255CA3E2003EC30F /* Fonts.swift */; };
 		78FBA32B255CA6E0003EC30F /* ImagePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FBA32A255CA6E0003EC30F /* ImagePickerController.swift */; };
 		78FBA337255CABB4003EC30F /* SwiftyBeaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FBA336255CABB4003EC30F /* SwiftyBeaver.swift */; };
@@ -34,9 +34,9 @@
 		7814D053255C9DDC009D4571 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7814D056255C9DDC009D4571 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7814D058255C9DDC009D4571 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7814D066255C9FDB009D4571 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
+		7814D066255C9FDB009D4571 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		7814D071255CA0E8009D4571 /* cartoongan_int8.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = cartoongan_int8.tflite; sourceTree = "<group>"; };
-		7814D075255CA100009D4571 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		7814D075255CA100009D4571 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		78FBA326255CA3E2003EC30F /* Fonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
 		78FBA32A255CA6E0003EC30F /* ImagePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerController.swift; sourceTree = "<group>"; };
 		78FBA336255CABB4003EC30F /* SwiftyBeaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyBeaver.swift; sourceTree = "<group>"; };
@@ -110,7 +110,7 @@
 		7814D063255C9E80009D4571 /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
-				7814D066255C9FDB009D4571 /* RootViewController.swift */,
+				7814D066255C9FDB009D4571 /* ViewController.swift */,
 				78FBA32A255CA6E0003EC30F /* ImagePickerController.swift */,
 			);
 			path = ViewController;
@@ -136,7 +136,7 @@
 		7814D074255CA0EC009D4571 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				7814D075255CA100009D4571 /* RootView.swift */,
+				7814D075255CA100009D4571 /* MainView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -318,12 +318,12 @@
 				78FBA32B255CA6E0003EC30F /* ImagePickerController.swift in Sources */,
 				78FBA337255CABB4003EC30F /* SwiftyBeaver.swift in Sources */,
 				78FBA359255D9644003EC30F /* ErrorDialog.swift in Sources */,
-				7814D076255CA100009D4571 /* RootView.swift in Sources */,
+				7814D076255CA100009D4571 /* MainView.swift in Sources */,
 				78FBA327255CA3E2003EC30F /* Fonts.swift in Sources */,
 				7814D04B255C9DDA009D4571 /* AppDelegate.swift in Sources */,
 				78FBA33F255CD164003EC30F /* CartoonGanModel.swift in Sources */,
 				78FBA35E255DAC40003EC30F /* PopUpDialog.swift in Sources */,
-				7814D067255C9FDB009D4571 /* RootViewController.swift in Sources */,
+				7814D067255C9FDB009D4571 /* ViewController.swift in Sources */,
 				78FBA346255D7DF9003EC30F /* UIImage+CVPixelBuffer.swift in Sources */,
 				78FBA349255D83EE003EC30F /* CVPixelBuffer+Data.swift in Sources */,
 				7814D04D255C9DDA009D4571 /* SceneDelegate.swift in Sources */,
