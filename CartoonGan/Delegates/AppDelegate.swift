@@ -1,5 +1,6 @@
 import UIKit
 import SwiftyBeaver
+import PopupDialog
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
@@ -21,6 +22,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         
         // configure logger
         SwiftyBeaver.setup()
+
+        // configure pop up dialogs
+        PopupDialog.setup()
         
         return true
     }

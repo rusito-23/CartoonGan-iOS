@@ -9,6 +9,8 @@ struct Font {
     static var subtitle: UIFont { with(size: .medium) }
     
     static var paragraph: UIFont { with(size: .small) }
+
+    static var small: UIFont { with(size: .extraSmall) }
         
     // MARK: - Size
     

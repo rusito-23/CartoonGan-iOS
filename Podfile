@@ -3,7 +3,8 @@
 target 'CartoonGan' do
     use_frameworks!
 
-    pod 'TensorFlowLiteSwift'
+    pod 'TensorFlowLiteSwift', '~> 2.3.0'
     pod 'SwiftyBeaver'
+    pod 'PopupDialog', '~> 1.1'
 
 end

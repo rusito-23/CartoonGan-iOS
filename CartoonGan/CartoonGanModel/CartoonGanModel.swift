@@ -60,6 +60,10 @@ class CartoonGanModel {
         self.init(name: modelInfo.name, ext: modelInfo.ext)
     }
 
+    convenience init?() {
+        self.init(modelInfo: CartoonGanModelInfo.default)
+    }
+
     // MARK: - Methods
     
     func process(with image: UIImage) {

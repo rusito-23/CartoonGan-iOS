@@ -5,7 +5,11 @@ class RootViewController: UIViewController {
     
     // MARK: - Properties
 
-    private var cartoonGanModel: CartoonGanModel?
+    private lazy var cartoonGanModel: CartoonGanModel? = {
+        let model = CartoonGanModel()
+        model?.delegate = self
+        return model
+    }()
     
     private lazy var imagePickerController: ImagePickerController = {
         let imagePicker = ImagePickerController()
@@ -14,10 +18,10 @@ class RootViewController: UIViewController {
     }()
     
     // MARK: - Views
-    
+
     private lazy var rootView: RootView = RootView()
-    private var cameraButton: UIButton { return rootView.cameraButton }
-    private var galleryButton: UIButton { return rootView.galleryButton }
+    private var cameraButton: UIButton { rootView.cameraButton }
+    private var galleryButton: UIButton { rootView.galleryButton }
     
     // MARK: - View Lifecycle
     
@@ -30,27 +34,15 @@ class RootViewController: UIViewController {
 
         cameraButton.addTarget(self, action: #selector(cameraButtonTapped), for: .touchUpInside)
         galleryButton.addTarget(self, action: #selector(galleryButtonTapped), for: .touchUpInside)
-        initializeModel()
     }
-    
-    // MARK: - Methods
 
-    private func initializeModel() {
-        guard let model = CartoonGanModel(modelInfo: CartoonGanModelInfo.default) else {
-            log.error("Failed to initialize the model!")
-            // TODO: handle
-            return
-        }
+    // MARK: - Private Methods
 
-        model.delegate = self
-        self.cartoonGanModel = model
-    }
-    
-    @objc func cameraButtonTapped() {
+    @objc private func cameraButtonTapped() {
         imagePickerController.cameraAccessRequest()
     }
     
-    @objc func galleryButtonTapped() {
+    @objc private func galleryButtonTapped() {
         imagePickerController.photoGalleryAccessRequest()
     }
     
@@ -58,31 +50,42 @@ class RootViewController: UIViewController {
         imagePickerController.present(parent: self, sourceType: sourceType)
     }
 
+    private func showErrorDialog(message: String) {
+        let errorDialog = ErrorDialog(message: message)
+        errorDialog.present(self)
+    }
+
 }
 
 // MARK: - ImagePickerControllerDelegate
 
 extension RootViewController: ImagePickerControllerDelegate {
-    func imagePicker(_ imagePicker: ImagePickerController, canUseCamera accessIsAllowed: Bool) {
-        if accessIsAllowed {
-            presentImagePicker(sourceType: .camera)
+    func imagePicker(_ imagePicker: ImagePickerController, canUseCamera allowed: Bool) {
+        guard allowed else {
+            log.error("Camera access request failed!")
+            showErrorDialog(message: "We don't have access to your camera")
+            return
         }
+
+        presentImagePicker(sourceType: .camera)
     }
     
-    func imagePicker(_ imagePicker: ImagePickerController, canUseGallery accessIsAllowed: Bool) {
-        if accessIsAllowed {
-            presentImagePicker(sourceType: .photoLibrary)
+    func imagePicker(_ imagePicker: ImagePickerController, canUseGallery allowed: Bool) {
+        guard allowed else {
+            log.error("Gallery access request failed!")
+            showErrorDialog(message: "We don't have access to your gallery")
+            return
         }
+
+        presentImagePicker(sourceType: .photoLibrary)
     }
     
     func imagePicker(_ imagePicker: ImagePickerController, didSelect image: UIImage) {
-        
+        // TODO!
     }
     
     func imagePicker(_ imagePicker: ImagePickerController, didCancel cancel: Bool) {
-        if cancel {
-            imagePickerController.dismiss()
-        }
+        if cancel { imagePickerController.dismiss() }
     }
 }
 

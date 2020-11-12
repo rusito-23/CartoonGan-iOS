@@ -21,6 +21,8 @@
 		78FBA343255D7BCB003EC30F /* UIImage+Symbols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FBA342255D7BCB003EC30F /* UIImage+Symbols.swift */; };
 		78FBA346255D7DF9003EC30F /* UIImage+CVPixelBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FBA345255D7DF9003EC30F /* UIImage+CVPixelBuffer.swift */; };
 		78FBA349255D83EE003EC30F /* CVPixelBuffer+Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FBA348255D83EE003EC30F /* CVPixelBuffer+Data.swift */; };
+		78FBA359255D9644003EC30F /* ErrorDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FBA358255D9644003EC30F /* ErrorDialog.swift */; };
+		78FBA35E255DAC40003EC30F /* PopUpDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FBA35D255DAC40003EC30F /* PopUpDialog.swift */; };
 		E7CAD67B2041FD164A4998C9 /* Pods_CartoonGan.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8D0FD092D6C74887B871520 /* Pods_CartoonGan.framework */; };
 /* End PBXBuildFile section */
 
@@ -42,6 +44,8 @@
 		78FBA342255D7BCB003EC30F /* UIImage+Symbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Symbols.swift"; sourceTree = "<group>"; };
 		78FBA345255D7DF9003EC30F /* UIImage+CVPixelBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+CVPixelBuffer.swift"; sourceTree = "<group>"; };
 		78FBA348255D83EE003EC30F /* CVPixelBuffer+Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CVPixelBuffer+Data.swift"; sourceTree = "<group>"; };
+		78FBA358255D9644003EC30F /* ErrorDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorDialog.swift; sourceTree = "<group>"; };
+		78FBA35D255DAC40003EC30F /* PopUpDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpDialog.swift; sourceTree = "<group>"; };
 		968E9615254DE1B4F4D51D29 /* Pods-CartoonGan.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CartoonGan.release.xcconfig"; path = "Target Support Files/Pods-CartoonGan/Pods-CartoonGan.release.xcconfig"; sourceTree = "<group>"; };
 		E8D0FD092D6C74887B871520 /* Pods_CartoonGan.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CartoonGan.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -79,9 +83,10 @@
 		7814D049255C9DDA009D4571 /* CartoonGan */ = {
 			isa = PBXGroup;
 			children = (
+				78FBA357255D963B003EC30F /* Dialog */,
 				78FBA341255D7BBB003EC30F /* Extensions */,
 				78FBA33D255CD13B003EC30F /* CartoonGanModel */,
-				78FBA335255CABA5003EC30F /* SwiftyBeaver */,
+				78FBA335255CABA5003EC30F /* Setup */,
 				78FBA325255CA3D7003EC30F /* UI */,
 				7814D070255CA0CB009D4571 /* Model */,
 				7814D064255C9E91009D4571 /* Delegates */,
@@ -144,12 +149,13 @@
 			path = UI;
 			sourceTree = "<group>";
 		};
-		78FBA335255CABA5003EC30F /* SwiftyBeaver */ = {
+		78FBA335255CABA5003EC30F /* Setup */ = {
 			isa = PBXGroup;
 			children = (
 				78FBA336255CABB4003EC30F /* SwiftyBeaver.swift */,
+				78FBA35D255DAC40003EC30F /* PopUpDialog.swift */,
 			);
-			path = SwiftyBeaver;
+			path = Setup;
 			sourceTree = "<group>";
 		};
 		78FBA33D255CD13B003EC30F /* CartoonGanModel */ = {
@@ -168,6 +174,14 @@
 				78FBA348255D83EE003EC30F /* CVPixelBuffer+Data.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		78FBA357255D963B003EC30F /* Dialog */ = {
+			isa = PBXGroup;
+			children = (
+				78FBA358255D9644003EC30F /* ErrorDialog.swift */,
+			);
+			path = Dialog;
 			sourceTree = "<group>";
 		};
 		7D34594694736C2860A385DF /* Frameworks */ = {
@@ -303,10 +317,12 @@
 			files = (
 				78FBA32B255CA6E0003EC30F /* ImagePickerController.swift in Sources */,
 				78FBA337255CABB4003EC30F /* SwiftyBeaver.swift in Sources */,
+				78FBA359255D9644003EC30F /* ErrorDialog.swift in Sources */,
 				7814D076255CA100009D4571 /* RootView.swift in Sources */,
 				78FBA327255CA3E2003EC30F /* Fonts.swift in Sources */,
 				7814D04B255C9DDA009D4571 /* AppDelegate.swift in Sources */,
 				78FBA33F255CD164003EC30F /* CartoonGanModel.swift in Sources */,
+				78FBA35E255DAC40003EC30F /* PopUpDialog.swift in Sources */,
 				7814D067255C9FDB009D4571 /* RootViewController.swift in Sources */,
 				78FBA346255D7DF9003EC30F /* UIImage+CVPixelBuffer.swift in Sources */,
 				78FBA349255D83EE003EC30F /* CVPixelBuffer+Data.swift in Sources */,
