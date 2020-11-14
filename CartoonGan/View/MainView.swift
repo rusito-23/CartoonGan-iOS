@@ -47,6 +47,13 @@ class MainView: UIView {
         label.textAlignment = .center
         return label
     }()
+
+    lazy var imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.backgroundColor = .black
+        return imageView
+    }()
     
     // MARK: - Constants
     
@@ -72,6 +79,7 @@ class MainView: UIView {
         addSubviews(
             titleLabel,
             subtitleLabel,
+            imageView,
             galleryButton,
             cameraButton
         )
@@ -87,6 +95,11 @@ class MainView: UIView {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
+            imageView.topAnchor.constraint(equalTo: topAnchor),
+            imageView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
+
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: Constants.Title.topSpacing),
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Constants.Title.sideSpacing),
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constants.Title.sideSpacing),

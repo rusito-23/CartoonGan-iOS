@@ -34,7 +34,9 @@ class ImagePickerController: NSObject {
         viewController.present(self.controller, animated: true, completion: nil)
     }
 
-    func dismiss() { controller.dismiss(animated: true, completion: nil) }
+    func dismiss(_ completion: (() -> ())? = nil) {
+        controller.dismiss(animated: true, completion: completion)
+    }
 
     // MARK: - Methods
 

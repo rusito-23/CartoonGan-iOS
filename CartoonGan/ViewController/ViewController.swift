@@ -18,9 +18,11 @@ class ViewController: UIViewController {
     
     // MARK: - Views
 
+    private lazy var spinner = UIActivityIndicatorView(style: .large)
     private lazy var mainView = MainView()
     private var cameraButton: UIButton { mainView.cameraButton }
     private var galleryButton: UIButton { mainView.galleryButton }
+    private var imageView: UIImageView { mainView.imageView }
     
     // MARK: - View Lifecycle
     
@@ -54,6 +56,20 @@ class ViewController: UIViewController {
         errorDialog.present(self)
     }
 
+    private func startLoading() {
+        view.addSubview(spinner)
+        spinner.startAnimating()
+        NSLayoutConstraint.activate([
+            spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+        ])
+    }
+
+    private func stopLoading() {
+        spinner.stopAnimating()
+        spinner.removeFromSuperview()
+    }
+
 }
 
 // MARK: - ImagePickerControllerDelegate
@@ -80,14 +96,17 @@ extension ViewController: ImagePickerControllerDelegate {
     }
     
     func imagePicker(_ imagePicker: ImagePickerController, didSelect image: UIImage) {
-        imagePicker.dismiss()
-        guard let cartoonGanModel = cartoonGanModel else {
-            log.error("Failed to initialize model!")
-            showErrorDialog(message: "We won't be able to process the image")
-            return
-        }
+        imagePicker.dismiss {
+            self.startLoading()
+            guard let model = self.cartoonGanModel else {
+                log.error("Failed to initialize model!")
+                self.stopLoading()
+                self.showErrorDialog(message: "We failed to initialize the model!")
+                return
+            }
 
-        cartoonGanModel.process(image)
+            model.process(image)
+        }
     }
     
     func imagePicker(_ imagePicker: ImagePickerController, didCancel cancel: Bool) {
@@ -106,10 +125,12 @@ extension ViewController: ImagePickerControllerDelegate {
 
 extension ViewController: CartoonGanModelDelegate {
     func model(_ model: CartoonGanModel, didFinishProcessing image: UIImage) {
-
+        stopLoading()
+        imageView.image = image
     }
 
     func model(_ model: CartoonGanModel, didFailedProcessing error: CartoonGanModelError) {
-        
+        stopLoading()
+        showErrorDialog(message: error.localizedDescription)
     }
 }
