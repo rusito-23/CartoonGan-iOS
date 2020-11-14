@@ -6,5 +6,6 @@ target 'CartoonGan' do
     pod 'TensorFlowLiteSwift', '~> 2.3.0'
     pod 'SwiftyBeaver'
     pod 'PopupDialog', '~> 1.1'
+    pod 'SwiftSpinner'
 
 end

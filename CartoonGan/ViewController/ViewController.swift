@@ -1,12 +1,13 @@
 import UIKit
+import SwiftSpinner
 
 class ViewController: UIViewController {
     
     // MARK: - Properties
 
-    private lazy var cartoonGanModel: CartoonGanModel? = {
+    private lazy var cartoonGanModel: CartoonGanModel = {
         let model = CartoonGanModel()
-        model?.delegate = self
+        model.delegate = self
         return model
     }()
     
@@ -15,6 +16,13 @@ class ViewController: UIViewController {
         imagePicker.delegate = self
         return imagePicker
     }()
+
+    private var enabled: Bool = false {
+        didSet {
+            galleryButton.isEnabled = enabled
+            cameraButton.isEnabled = enabled
+        }
+    }
     
     // MARK: - Views
 
@@ -32,9 +40,26 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupSpinner()
 
-        cameraButton.addTarget(self, action: #selector(cameraButtonTapped), for: .touchUpInside)
-        galleryButton.addTarget(self, action: #selector(galleryButtonTapped), for: .touchUpInside)
+        cameraButton.addTarget(
+            self,
+            action: #selector(cameraButtonTapped),
+            for: .touchUpInside
+        )
+        galleryButton.addTarget(
+            self,
+            action: #selector(galleryButtonTapped),
+            for: .touchUpInside
+        )
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        SwiftSpinner.show("Initializing model...")
+        cartoonGanModel.start()
+        enabled = false
     }
 
     // MARK: - Private Methods
@@ -56,20 +81,11 @@ class ViewController: UIViewController {
         errorDialog.present(self)
     }
 
-    private func startLoading() {
-        view.addSubview(spinner)
-        spinner.startAnimating()
-        NSLayoutConstraint.activate([
-            spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-        ])
+    private func setupSpinner() {
+        SwiftSpinner.useContainerView(view)
+        SwiftSpinner.showBlurBackground = false
+        SwiftSpinner.setTitleFont(Font.paragraph)
     }
-
-    private func stopLoading() {
-        spinner.stopAnimating()
-        spinner.removeFromSuperview()
-    }
-
 }
 
 // MARK: - ImagePickerControllerDelegate
@@ -97,15 +113,8 @@ extension ViewController: ImagePickerControllerDelegate {
     
     func imagePicker(_ imagePicker: ImagePickerController, didSelect image: UIImage) {
         imagePicker.dismiss {
-            self.startLoading()
-            guard let model = self.cartoonGanModel else {
-                log.error("Failed to initialize model!")
-                self.stopLoading()
-                self.showErrorDialog(message: "We failed to initialize the model!")
-                return
-            }
-
-            model.process(image)
+            SwiftSpinner.show("Processing your image...")
+            // call model
         }
     }
     
@@ -125,12 +134,28 @@ extension ViewController: ImagePickerControllerDelegate {
 
 extension ViewController: CartoonGanModelDelegate {
     func model(_ model: CartoonGanModel, didFinishProcessing image: UIImage) {
-        stopLoading()
-        imageView.image = image
+        DispatchQueue.main.async {
+            SwiftSpinner.hide()
+            self.imageView.image = image
+        }
     }
 
     func model(_ model: CartoonGanModel, didFailedProcessing error: CartoonGanModelError) {
-        stopLoading()
-        showErrorDialog(message: error.localizedDescription)
+        DispatchQueue.main.async {
+            SwiftSpinner.hide()
+            self.showErrorDialog(message: error.localizedDescription)
+        }
+    }
+
+    func model(_ model: CartoonGanModel, didFinishAllocation error: CartoonGanModelError?) {
+        DispatchQueue.main.async {
+            SwiftSpinner.hide()
+            guard let error = error else {
+                self.enabled = true
+                return
+            }
+
+            self.showErrorDialog(message: error.localizedDescription)
+        }
     }
 }

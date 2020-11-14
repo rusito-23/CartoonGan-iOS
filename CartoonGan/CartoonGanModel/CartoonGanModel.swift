@@ -4,6 +4,7 @@ import TensorFlowLite
 // MARK: - CartoonGanModel Errors
 
 enum CartoonGanModelError: String, Error {
+    case allocation = "Failed to initialize the interpreter!"
     case preprocess = "Failed to preprocess the image!"
     case process = "Failed to process the image!"
     case postprocess = "Failed to process the output!"
@@ -15,6 +16,7 @@ enum CartoonGanModelError: String, Error {
 
 protocol CartoonGanModelDelegate: NSObject {
     func model(_ model: CartoonGanModel, didFinishProcessing image: UIImage)
+    func model(_ model: CartoonGanModel, didFinishAllocation error: CartoonGanModelError?)
     func model(_ model: CartoonGanModel, didFailedProcessing error: CartoonGanModelError)
 }
 
@@ -25,8 +27,9 @@ class CartoonGanModel {
     // MARK: - Properties
     
     weak var delegate: CartoonGanModelDelegate?
-    private var interpreter: Interpreter
+    private var interpreter: Interpreter?
     private var processing: Bool = false
+    private let queue = DispatchQueue(label: Constants.Queue.label)
     
     // MARK: - Constants
     
@@ -45,41 +48,64 @@ class CartoonGanModel {
             static let mean: Float = 127.5
             static let std: Float = 127.5
         }
-    }
 
-    // MARK: - Initializers
-
-    init?(name: String, ext: String) {
-        guard let modelPath = Bundle.main.path(forResource: name, ofType: ext) else {
-            log.error("Could not find model file: \(name).\(ext)")
-            return nil
-        }
-        
-        do {
-            interpreter = try Interpreter(modelPath: modelPath)
-            try interpreter.allocateTensors()
-        } catch let error {
-            log.error("Interpreter initialization failed with error: \(error.localizedDescription)")
-            return nil
+        struct Queue {
+            static let label = "com.rusito23.CartoonGan"
         }
     }
-    
-    convenience init?() {
-        self.init(
+
+    // MARK: - Methods
+
+    func start(
+        name: String,
+        ext: String
+    ) {
+        queue.async {
+            guard let modelPath = Bundle.main.path(
+                forResource: name,
+                ofType: ext
+            ) else {
+                log.error("Could not find model file: \(name).\(ext)")
+                self.delegate?.model(self, didFinishAllocation: .allocation)
+                return
+            }
+
+            do {
+                self.interpreter = try Interpreter(modelPath: modelPath)
+                try self.interpreter?.allocateTensors()
+            } catch let error {
+                log.error("Interpreter initialization failed with error: \(error.localizedDescription)")
+                self.delegate?.model(self, didFinishAllocation: .allocation)
+                return
+            }
+
+            self.delegate?.model(self, didFinishAllocation: nil)
+        }
+    }
+
+    func start() {
+        start(
             name: Constants.File.name,
             ext: Constants.File.ext
         )
     }
 
-    // MARK: - Methods
-    
+    // TODO: handle things in queue
     func process(_ image: UIImage) {
+        // prevent double processing
         guard !processing else {
             log.info("Already processing...")
             return
         }
         processing = true
         defer { processing = false }
+
+        // check interpreter
+        guard let interpreter = interpreter else {
+            log.info("Interpreter not available")
+            delegate?.model(self, didFailedProcessing: .allocation)
+            return
+        }
 
         // 🛠 preprocess
         guard let data = preprocess(image) else {
