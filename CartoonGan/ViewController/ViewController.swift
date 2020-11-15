@@ -114,7 +114,7 @@ extension ViewController: ImagePickerControllerDelegate {
     func imagePicker(_ imagePicker: ImagePickerController, didSelect image: UIImage) {
         imagePicker.dismiss {
             SwiftSpinner.show("Processing your image...")
-            // call model
+            self.cartoonGanModel.process(image)
         }
     }
     

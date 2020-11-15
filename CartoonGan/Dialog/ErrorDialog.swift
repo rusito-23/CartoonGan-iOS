@@ -6,12 +6,6 @@ class ErrorDialog {
 
     private var dialog: PopupDialog
 
-    private lazy var defaultButton = DefaultButton(
-        title: "Oh... OK",
-        dismissOnTap: true,
-        action: nil
-    )
-
     // MARK: - Initializers
 
     init(message: String) {
@@ -22,7 +16,13 @@ class ErrorDialog {
             transitionStyle: .bounceDown
         )
 
-        dialog.addButton(defaultButton)
+        dialog.addButton(
+            DefaultButton(
+                title: "Oh... OK",
+                dismissOnTap: true,
+                action: nil
+            )
+        )
     }
 
     // MARK: - Methods

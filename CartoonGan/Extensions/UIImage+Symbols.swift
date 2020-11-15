@@ -1,18 +1,25 @@
 import UIKit
 
 extension UIImage {
-    static func camera(scale: UIImage.SymbolScale) -> UIImage {
-        return UIImage(
-            systemName: "camera",
-            withConfiguration: UIImage.SymbolConfiguration(
-                scale: scale
-            )
-        ) ?? UIImage()
+
+    // MARK: - Properties
+
+    static var camera: UIImage {
+        symbol(named: "camera", scale: .large)
     }
 
-    static func photo(scale: UIImage.SymbolScale) -> UIImage {
+    static var photo: UIImage {
+        symbol(named: "photo", scale: .large)
+    }
+
+    // MARK: - Methods
+
+    private static func symbol(
+        named name: String,
+        scale: UIImage.SymbolScale
+    ) -> UIImage {
         return UIImage(
-            systemName: "photo",
+            systemName: name,
             withConfiguration: UIImage.SymbolConfiguration(
                 scale: scale
             )

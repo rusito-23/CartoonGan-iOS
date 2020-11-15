@@ -6,7 +6,7 @@ class MainView: UIView {
     
     lazy var cameraButton: UIButton = {
         let button = UIButton()
-        button.setImage(.camera(scale: .large), for: .normal)
+        button.setImage(.camera, for: .normal)
         button.titleLabel?.font = Font.paragraph
         button.layer.cornerRadius = Constants.Button.cornerRadius
         button.layer.borderColor = UIColor.white.cgColor
@@ -18,7 +18,7 @@ class MainView: UIView {
     
     lazy var galleryButton: UIButton = {
         let button = UIButton()
-        button.setImage(.photo(scale: .large), for: .normal)
+        button.setImage(.photo, for: .normal)
         button.titleLabel?.font = Font.paragraph
         button.layer.cornerRadius = Constants.Button.cornerRadius
         button.layer.borderColor = UIColor.white.cgColor
