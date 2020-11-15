@@ -149,8 +149,8 @@ class CartoonGanModel {
             // 🍉 post process
             log.debug("Start post-processing 🍉")
             guard
-                 let outputTensor = try? interpreter.output(at: 0),
-                 let output = self.postprocess(data: outputTensor.data)
+                let outputTensor = try? interpreter.output(at: 0),
+                let output = self.postprocess(data: outputTensor.data, to: image.size)
             else {
                 log.error("Could not retrieve output image")
                 self.delegate?.model(self, didFailedProcessing: .postprocess)
@@ -219,7 +219,8 @@ class CartoonGanModel {
     private func postprocess(
         data: Data,
         width: Int = Constants.Units.Common.width,
-        height: Int = Constants.Units.Common.height
+        height: Int = Constants.Units.Common.height,
+        to originalSize: CGSize
     ) -> UIImage? {
         // read output as float array
         let floats = data.toArray(type: Float32.self)
@@ -270,8 +271,15 @@ class CartoonGanModel {
             return nil
         }
 
-        return UIImage(cgImage: cgImage)
+        // keep original size
+        guard let resizedImage = resize(cgImage, to: originalSize)
+        else { return nil }
+
+        // extract resulting image from context
+        return UIImage(cgImage: resizedImage)
     }
+
+    // MARK: - Normalization
 
     private func denormalize(_ pixel: Float32) -> UInt8 {
         let bigInt = Int32((pixel + Constants.Units.Output.mean) * Constants.Units.Input.std)
@@ -283,6 +291,8 @@ class CartoonGanModel {
         (Float32(pixel) - Constants.Units.Input.mean) / Constants.Units.Input.std
         // Float32(pixel)
     }
+
+    // MARK: - Image utils
 
     private func createUpTransformation(
         _ orientation: UIImage.Orientation,
@@ -314,6 +324,48 @@ class CartoonGanModel {
         }
 
         return transform
+    }
+
+    private func resize(_ image: CGImage, to size: CGSize) -> CGImage? {
+        let imageWidth = Float(image.width)
+        let imageHeight = Float(image.height)
+        let maxWidth = Float(size.width)
+        let maxHeight = Float(size.height)
+
+        // get ratio (landscape or portrait)
+        var ratio: Float = imageWidth > imageHeight ?
+            maxWidth / imageWidth : maxHeight / imageHeight
+
+        // calculate new size
+        if ratio > 1 { ratio = 1 }
+        let width = imageWidth * ratio
+        let height = imageHeight * ratio
+
+        // create context
+        guard let colorSpace = image.colorSpace else { return nil }
+        guard let context = CGContext(
+                data: nil,
+                width: Int(width),
+                height: Int(height),
+                bitsPerComponent: image.bitsPerComponent,
+                bytesPerRow: image.bytesPerRow,
+                space: colorSpace,
+                bitmapInfo: image.alphaInfo.rawValue
+        ) else { return nil }
+
+        // draw image to context (resizing it)
+        context.interpolationQuality = .high
+        context.draw(
+            image,
+            in: CGRect(
+                x: .zero, y: .zero,
+                width: Int(width),
+                height: Int(height)
+            )
+        )
+
+        // extract resulting image from context
+        return context.makeImage()
     }
 
 }
