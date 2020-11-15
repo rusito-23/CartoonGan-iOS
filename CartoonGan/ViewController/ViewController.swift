@@ -30,7 +30,6 @@ class ViewController: UIViewController {
     private lazy var mainView = MainView()
     private var cameraButton: UIButton { mainView.cameraButton }
     private var galleryButton: UIButton { mainView.galleryButton }
-    private var imageView: UIImageView { mainView.imageView }
     
     // MARK: - View Lifecycle
     
@@ -135,7 +134,9 @@ extension ViewController: CartoonGanModelDelegate {
     func model(_ model: CartoonGanModel, didFinishProcessing image: UIImage) {
         DispatchQueue.main.async {
             SwiftSpinner.hide()
-            self.imageView.image = image
+
+            let cartoonViewController = CartoonViewController(image)
+            self.present(cartoonViewController, animated: true)
         }
     }
 

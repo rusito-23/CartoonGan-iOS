@@ -48,25 +48,18 @@ class MainView: UIView {
         return label
     }()
 
-    lazy var imageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.backgroundColor = .black
-        return imageView
-    }()
-    
     // MARK: - Constants
     
     private struct Constants {
         struct Button {
             static let size: CGFloat = 80
             static let cornerRadius: CGFloat = 40
-            static let spacing: CGFloat = 32.0
+            static let spacing: CGFloat = 32
             static let borderWidth: CGFloat = 3
         }
         struct Title {
-            static let topSpacing: CGFloat = 32.0
-            static let sideSpacing: CGFloat = 16.0
+            static let topSpacing: CGFloat = 32
+            static let sideSpacing: CGFloat = 16
         }
     }
     
@@ -79,7 +72,6 @@ class MainView: UIView {
         addSubviews(
             titleLabel,
             subtitleLabel,
-            imageView,
             galleryButton,
             cameraButton
         )
@@ -95,11 +87,6 @@ class MainView: UIView {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: topAnchor),
-            imageView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: Constants.Title.topSpacing),
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Constants.Title.sideSpacing),
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constants.Title.sideSpacing),
