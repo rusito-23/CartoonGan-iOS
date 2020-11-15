@@ -104,6 +104,7 @@ class CartoonGanModel {
         }
 
         // check input image
+        // TODO: check and change orientation
         guard let cgImage = image.cgImage else {
             log.info("Failed to retrieve cgImage")
             delegate?.model(self, didFailedProcessing: .preprocess)
@@ -172,47 +173,46 @@ class CartoonGanModel {
         CVPixelBufferLockBaseAddress(buffer, .write)
         defer { CVPixelBufferUnlockBaseAddress(buffer, .write) }
 
+        // buffer information
+        let bytesPerRow = CVPixelBufferGetBytesPerRow(buffer)
+        let bytesCount = bytesPerRow * height
         guard let base = CVPixelBufferGetBaseAddress(buffer)
         else { return nil }
 
-        // draw image in buffer
+        // create proper context
         guard let context = CGContext(
             data: base,
             width: width,
             height: height,
             bitsPerComponent: 8,
-            bytesPerRow: CVPixelBufferGetBytesPerRow(buffer),
+            bytesPerRow: bytesPerRow,
             space: CGColorSpaceCreateDeviceRGB(),
             bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue
         ) else { return nil }
-        context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
 
-        // convert to image buffer and remove alpha channel
-        var imageBuffer = vImage_Buffer(
-            data: base,
-            height: vImagePixelCount(height),
-            width: vImagePixelCount(width),
-            rowBytes: CVPixelBufferGetBytesPerRow(buffer)
-        )
-
-        vImageConvert_ARGB8888toRGB888(
-            &imageBuffer,
-            &imageBuffer,
-            UInt32(kvImageNoFlags)
+        // and draw
+        context.draw(
+            image,
+            in: CGRect(
+                origin: .zero,
+                width: width,
+                height: height
+            )
         )
 
         // parse byte data!
         guard let bytes = Array<UInt8>(
             unsafeData: Data(
                 bytes: base,
-                count: width * height * 3
+                count: bytesCount
             )
         ) else { return nil }
 
-        // normalize and convert to float
-        let normalized = bytes.map {
-            // (Float32($0) - Constants.ProcessUnits.mean) / Constants.ProcessUnits.std
-            Float32($0)
+        // convert to float
+        var normalized = [Float32]()
+        for i in 1..<bytesCount {
+            if i % 4 == 0 { continue } // ignore first alpha channel
+            normalized.append(normalize(bytes[i]))
         }
 
         // 🍻 convert to data! 🍺
@@ -281,6 +281,11 @@ class CartoonGanModel {
         UInt8(pixel)
     }
 
+    func normalize(_ pixel: UInt8) -> Float32 {
+        // (Float32($0) - Constants.ProcessUnits.mean) / Constants.ProcessUnits.std
+        Float32(pixel)
+    }
+
 }
 
 // MARK: - CVPixelBufferLockFlags Utils
@@ -288,5 +293,16 @@ class CartoonGanModel {
 extension CVPixelBufferLockFlags {
     static var write: CVPixelBufferLockFlags {
         CVPixelBufferLockFlags(rawValue: 0)
+    }
+}
+
+// MARK: - CGRect Utils
+
+extension CGRect {
+    init(origin: CGPoint, width: Int, height: Int) {
+        self.init(
+            origin: origin,
+            size: CGSize(width: width, height: height)
+        )
     }
 }

@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:../../Library/Autosave Information/ModelPlayground.playground">
+   </FileRef>
+   <FileRef
       location = "group:CartoonGan.xcodeproj">
    </FileRef>
    <FileRef
