@@ -14,7 +14,6 @@
 		7814D067255C9FDB009D4571 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7814D066255C9FDB009D4571 /* ViewController.swift */; };
 		7814D072255CA0E8009D4571 /* cartoongan_int8.tflite in Resources */ = {isa = PBXBuildFile; fileRef = 7814D071255CA0E8009D4571 /* cartoongan_int8.tflite */; };
 		7814D076255CA100009D4571 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7814D075255CA100009D4571 /* MainView.swift */; };
-		78B5C6EE255F43A00036D4FD /* CGImage+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78B5C6ED255F43A00036D4FD /* CGImage+Utils.swift */; };
 		78FBA327255CA3E2003EC30F /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FBA326255CA3E2003EC30F /* Fonts.swift */; };
 		78FBA32B255CA6E0003EC30F /* ImagePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FBA32A255CA6E0003EC30F /* ImagePickerController.swift */; };
 		78FBA337255CABB4003EC30F /* SwiftyBeaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FBA336255CABB4003EC30F /* SwiftyBeaver.swift */; };
@@ -38,7 +37,6 @@
 		7814D066255C9FDB009D4571 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		7814D071255CA0E8009D4571 /* cartoongan_int8.tflite */ = {isa = PBXFileReference; lastKnownFileType = file; path = cartoongan_int8.tflite; sourceTree = "<group>"; };
 		7814D075255CA100009D4571 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
-		78B5C6ED255F43A00036D4FD /* CGImage+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGImage+Utils.swift"; sourceTree = "<group>"; };
 		78FBA326255CA3E2003EC30F /* Fonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
 		78FBA32A255CA6E0003EC30F /* ImagePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerController.swift; sourceTree = "<group>"; };
 		78FBA336255CABB4003EC30F /* SwiftyBeaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyBeaver.swift; sourceTree = "<group>"; };
@@ -174,7 +172,6 @@
 				78FBA342255D7BCB003EC30F /* UIImage+Symbols.swift */,
 				78FBA37B255DF803003EC30F /* UIView+Helpers.swift */,
 				78FBA37E255E0091003EC30F /* Data+Array+Convert.swift */,
-				78B5C6ED255F43A00036D4FD /* CGImage+Utils.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -331,7 +328,6 @@
 				78FBA37F255E0091003EC30F /* Data+Array+Convert.swift in Sources */,
 				7814D04D255C9DDA009D4571 /* SceneDelegate.swift in Sources */,
 				78FBA343255D7BCB003EC30F /* UIImage+Symbols.swift in Sources */,
-				78B5C6EE255F43A00036D4FD /* CGImage+Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

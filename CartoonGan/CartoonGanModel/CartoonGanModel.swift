@@ -114,6 +114,7 @@ class CartoonGanModel {
             defer { self.processing = false }
 
             // 🛠 preprocess
+            log.debug("Start pre-processing 🛠")
             guard let data = self.preprocess(cgImage) else {
                 log.error("Preprocessing failed!")
                 self.delegate?.model(self, didFailedProcessing: .preprocess)
@@ -121,19 +122,21 @@ class CartoonGanModel {
             }
 
             // 🚀 pass through the model
-            do {
-                try interpreter.copy(data, toInputAt: 0)
-                try interpreter.invoke()
-            } catch let error {
-                log.error("Processing failed with error: \(error.localizedDescription)")
-                self.delegate?.model(self, didFailedProcessing: .process)
-                return
-            }
+//            log.debug("Invoke interpreter 🚀")
+//            do {
+//                try interpreter.copy(data, toInputAt: 0)
+//                try interpreter.invoke()
+//            } catch let error {
+//                log.error("Processing failed with error: \(error.localizedDescription)")
+//                self.delegate?.model(self, didFailedProcessing: .process)
+//                return
+//            }
 
             // 🍉 post process
+            log.debug("Start post-processing 🚀")
             guard
-                let outputTensor = try? interpreter.output(at: 0),
-                let outputImage = self.postprocess(data: outputTensor.data)
+                // let outputTensor = try? interpreter.output(at: 0),
+                let outputImage = self.postprocess(data: data)
             else {
                 log.error("Could not retrieve image")
                 self.delegate?.model(self, didFailedProcessing: .postprocess)
@@ -150,39 +153,71 @@ class CartoonGanModel {
         width: Int = Constants.Parameters.width,
         height: Int = Constants.Parameters.height
     ) -> Data? {
-        // resize and get image buffer
-        guard
-            let cgImage = image.resized(width: width, height: height),
-            var buffer = try? vImage_Buffer(cgImage: cgImage)
-        else {
-            log.debug("ERROR: Failed to get input cgImage")
-            return nil
-        }
+        // create brand new pixel buffer
+        var pixelBuffer: CVPixelBuffer?
+        CVPixelBufferCreate(
+            kCFAllocatorDefault,
+            width,
+            height,
+            kCVPixelFormatType_32ARGB,
+            [
+                kCVPixelBufferCGImageCompatibilityKey: kCFBooleanTrue,
+                kCVPixelBufferCGBitmapContextCompatibilityKey: kCFBooleanTrue
+            ] as CFDictionary,
+            &pixelBuffer
+        )
+        guard let buffer = pixelBuffer else { return nil }
 
-        // remove alpha channel
+        // lock buffer to write
+        CVPixelBufferLockBaseAddress(buffer, .write)
+        defer { CVPixelBufferUnlockBaseAddress(buffer, .write) }
+
+        guard let base = CVPixelBufferGetBaseAddress(buffer)
+        else { return nil }
+
+        // draw image in buffer
+        guard let context = CGContext(
+            data: base,
+            width: width,
+            height: height,
+            bitsPerComponent: 8,
+            bytesPerRow: CVPixelBufferGetBytesPerRow(buffer),
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue
+        ) else { return nil }
+        context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+
+        // convert to image buffer and remove alpha channel
+        var imageBuffer = vImage_Buffer(
+            data: base,
+            height: vImagePixelCount(height),
+            width: vImagePixelCount(width),
+            rowBytes: CVPixelBufferGetBytesPerRow(buffer)
+        )
+
         vImageConvert_ARGB8888toRGB888(
-            &buffer,
-            &buffer,
+            &imageBuffer,
+            &imageBuffer,
             UInt32(kvImageNoFlags)
         )
 
-        // parse image buffer data
+        // parse byte data!
         guard let bytes = Array<UInt8>(
             unsafeData: Data(
-                bytes: buffer.data,
-                count: buffer.rowBytes * height
+                bytes: base,
+                count: width * height * 3
             )
-        ) else {
-            log.debug("ERROR: Failed to create UInt8 Array")
-            return nil
+        ) else { return nil }
+
+        // normalize and convert to float
+        let normalized = bytes.map {
+            // (Float32($0) - Constants.ProcessUnits.mean) / Constants.ProcessUnits.std
+            Float32($0)
         }
 
-        // normalize image pixels and convert to float data! wii! 🍻 🍺
-        return Data(copyingBufferOf: bytes.map {
-            (Float32($0) - Constants.ProcessUnits.mean) / Constants.ProcessUnits.std
-        })
+        // 🍻 convert to data! 🍺
+        return Data(copyingBufferOf: normalized)
     }
-
 
     private func postprocess(
         data: Data,
@@ -201,15 +236,14 @@ class CartoonGanModel {
             for y in 0 ..< height {
                 let floatIndex = (y * width + x) * 3
                 let index = (y * width + x) * 4
-                let red = UInt8(floats[floatIndex])
-                let green = UInt8(floats[floatIndex + 1])
-                let blue = UInt8(floats[floatIndex + 2])
+                let red = denormalize(floats[floatIndex])
+                let green = denormalize(floats[floatIndex + 1])
+                let blue = denormalize(floats[floatIndex + 2])
 
                 unsafeBuffer[index] = red
                 unsafeBuffer[index + 1] = green
                 unsafeBuffer[index + 2] = blue
                 unsafeBuffer[index + 3] = 0
-                log.debug("red: \(red) green: \(green) blue: \(blue)")
             }
         }
 
@@ -240,14 +274,19 @@ class CartoonGanModel {
 
         return UIImage(cgImage: cgImage)
     }
+
+    func denormalize(_ pixel: Float32) -> UInt8 {
+        // UInt8(pixel) + Constants.ProcessUnits.mean / Constants.ProcessUnits.std
+        // TODO: clip
+        UInt8(pixel)
+    }
+
 }
 
-// MARK: - Data
-extension Data {
-  /// Convert a Data instance to Array representation.
-  func toArray<T>(type: T.Type) -> [T] where T: AdditiveArithmetic {
-    var array = [T](repeating: T.zero, count: self.count/MemoryLayout<T>.stride)
-    _ = array.withUnsafeMutableBytes { copyBytes(to: $0) }
-    return array
-  }
+// MARK: - CVPixelBufferLockFlags Utils
+
+extension CVPixelBufferLockFlags {
+    static var write: CVPixelBufferLockFlags {
+        CVPixelBufferLockFlags(rawValue: 0)
+    }
 }

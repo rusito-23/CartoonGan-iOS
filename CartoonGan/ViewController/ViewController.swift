@@ -83,7 +83,6 @@ class ViewController: UIViewController {
 
     private func setupSpinner() {
         SwiftSpinner.useContainerView(view)
-        SwiftSpinner.showBlurBackground = false
         SwiftSpinner.setTitleFont(Font.paragraph)
     }
 }
