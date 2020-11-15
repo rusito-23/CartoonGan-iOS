@@ -41,6 +41,7 @@ class CartoonGanModel {
             struct Common {
                 static let height: Int = 512
                 static let width: Int = 512
+                static let size = CGSize(width: width, height: height)
             }
 
             struct Input {
@@ -51,6 +52,14 @@ class CartoonGanModel {
             struct Output {
                 static let mean: Float32 = -1
                 static let std: Float32 = 0.007843
+            }
+
+            struct ARGB {
+                static let components = 4 // Alpha Red Green Blue
+                static let bitsPerComponent = 8 // 1 byte per component
+                static let bytesPerRow = Common.width * components
+                static let bytesCount = bytesPerRow * Common.height
+                static let bitsPerPixel = bitsPerComponent * components
             }
         }
 
@@ -134,8 +143,8 @@ class CartoonGanModel {
             // 🍉 post process
             log.debug("Start post-processing 🍉")
             guard
-                // let outputTensor = try? interpreter.output(at: 0),
-                let output = self.postprocess(data: data)
+                let outputTensor = try? interpreter.output(at: 0),
+                let output = self.postprocess(data: outputTensor.data)
             else {
                 log.error("Could not retrieve output image")
                 self.delegate?.model(self, didFailedProcessing: .postprocess)
@@ -153,24 +162,17 @@ class CartoonGanModel {
         height: Int = Constants.Units.Common.height,
         orientation: UIImage.Orientation
     ) -> Data? {
-        // init helpers
-        let size = CGSize(width: width, height: height)
-        let components = 4 // ARGB
-        let bitsPerComponent = 8
-        let bytesPerRow = width * components
-        let bytesCount = bytesPerRow * height
-
         // init buffer
-        guard let base = malloc(bytesCount)
+        guard let base = malloc(Constants.Units.ARGB.bytesCount)
         else { return nil }
 
-        // create context in buffer
+        // create context with buffer 🥽
         guard let context = CGContext(
             data: base,
             width: width,
             height: height,
-            bitsPerComponent: bitsPerComponent,
-            bytesPerRow: bytesPerRow,
+            bitsPerComponent: Constants.Units.ARGB.bitsPerComponent,
+            bytesPerRow: Constants.Units.ARGB.bytesPerRow,
             space: CGColorSpaceCreateDeviceRGB(),
             bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue
         ) else { return nil }
@@ -179,7 +181,7 @@ class CartoonGanModel {
         context.concatenate(
             createUpTransformation(
                 orientation,
-                size: size
+                size: Constants.Units.Common.size
             )
         )
 
@@ -188,19 +190,18 @@ class CartoonGanModel {
             image,
             in: CGRect(
                 origin: .zero,
-                size: size
+                size: Constants.Units.Common.size
             )
         )
-
         // parse byte data! 👓
         guard let bytes = Array<UInt8>(unsafeData: Data(
             bytes: base,
-            count: bytesCount
+            count: Constants.Units.ARGB.bytesCount
         )) else { return nil }
 
         // normalize, remove alpha and convert to float in a single step!
         var normalized = [Float32]()
-        for i in 1..<bytesCount {
+        for i in 1..<Constants.Units.ARGB.bytesCount {
             if i % 4 == 0 { continue } // ignore first alpha channel
             normalized.append(normalize(bytes[i]))
         }
@@ -214,14 +215,20 @@ class CartoonGanModel {
         width: Int = Constants.Units.Common.width,
         height: Int = Constants.Units.Common.height
     ) -> UIImage? {
+        // read output as float array
         let floats = data.toArray(type: Float32.self)
 
-        let bufferCapacity = width * height * 4
-        let unsafePointer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferCapacity)
-        let unsafeBuffer = UnsafeMutableBufferPointer<UInt8>(start: unsafePointer, count: bufferCapacity)
+        // allocate target buffer
+        let pointer = UnsafeMutablePointer<UInt8>.allocate(
+            capacity: Constants.Units.ARGB.bytesCount
+        )
+        let buffer = UnsafeMutableBufferPointer<UInt8>(
+            start: pointer,
+            count: Constants.Units.ARGB.bytesCount
+        )
+        defer { pointer.deallocate() }
 
-        defer { unsafePointer.deallocate() }
-
+        // de normalize and add empty alpha channel
         for x in 0 ..< width {
             for y in 0 ..< height {
                 let floatIndex = (y * width + x) * 3
@@ -230,29 +237,28 @@ class CartoonGanModel {
                 let green = denormalize(floats[floatIndex + 1])
                 let blue = denormalize(floats[floatIndex + 2])
 
-                unsafeBuffer[index] = red
-                unsafeBuffer[index + 1] = green
-                unsafeBuffer[index + 2] = blue
-                unsafeBuffer[index + 3] = 0
+                buffer[index] = red
+                buffer[index + 1] = green
+                buffer[index + 2] = blue
+                buffer[index + 3] = 0
             }
         }
 
-        let outData = Data(buffer: unsafeBuffer)
-
-        // Construct image from output tensor data
-        let alphaInfo = CGImageAlphaInfo.noneSkipLast
-        let bitmapInfo = CGBitmapInfo(rawValue: alphaInfo.rawValue).union(.byteOrder32Big)
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        // construct image with data
         guard
-            let imageDataProvider = CGDataProvider(data: outData as CFData),
+            let imageDataProvider = CGDataProvider(
+                data: Data(buffer: buffer) as CFData
+            ),
             let cgImage = CGImage(
                 width: width,
                 height: height,
-                bitsPerComponent: 8,
-                bitsPerPixel: 32,
-                bytesPerRow: MemoryLayout<UInt8>.size * 4 * Int(width),
-                space: colorSpace,
-                bitmapInfo: bitmapInfo,
+                bitsPerComponent: Constants.Units.ARGB.bitsPerComponent,
+                bitsPerPixel: Constants.Units.ARGB.bitsPerPixel,
+                bytesPerRow: Constants.Units.ARGB.bytesPerRow,
+                space: CGColorSpaceCreateDeviceRGB(),
+                bitmapInfo: CGBitmapInfo(
+                    rawValue: CGImageAlphaInfo.noneSkipLast.rawValue
+                ).union(.byteOrder32Big),
                 provider: imageDataProvider,
                 decode: nil,
                 shouldInterpolate: false,
@@ -266,14 +272,12 @@ class CartoonGanModel {
     }
 
     private func denormalize(_ pixel: Float32) -> UInt8 {
-        // UInt8(pixel) + Constants.ProcessUnits.mean / Constants.ProcessUnits.std
-        // TODO: clip
-        UInt8(pixel)
+        let bigInt = Int32((pixel + Constants.Units.Output.mean) * Constants.Units.Output.std)
+        return UInt8(min(max(bigInt, Int32(UInt8.max)), Int32(UInt8.min)))
     }
 
     private func normalize(_ pixel: UInt8) -> Float32 {
-        // (Float32($0) - Constants.ProcessUnits.mean) / Constants.ProcessUnits.std
-        Float32(pixel)
+        (Float32(pixel) - Constants.Units.Input.mean) / Constants.Units.Input.std
     }
 
     private func createUpTransformation(
@@ -308,12 +312,4 @@ class CartoonGanModel {
         return transform
     }
 
-}
-
-// MARK: - CVPixelBufferLockFlags Utils
-
-extension CVPixelBufferLockFlags {
-    static var write: CVPixelBufferLockFlags {
-        CVPixelBufferLockFlags(rawValue: 0)
-    }
 }
