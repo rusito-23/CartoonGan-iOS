@@ -1,4 +1,3 @@
-import Accelerate
 import TensorFlowLite
 
 // MARK: - CartoonGanModel Errors
@@ -122,18 +121,18 @@ class CartoonGanModel {
             }
 
             // 🚀 pass through the model
-//            log.debug("Invoke interpreter 🚀")
-//            do {
-//                try interpreter.copy(data, toInputAt: 0)
-//                try interpreter.invoke()
-//            } catch let error {
-//                log.error("Processing failed with error: \(error.localizedDescription)")
-//                self.delegate?.model(self, didFailedProcessing: .process)
-//                return
-//            }
+            log.debug("Invoke interpreter 🚀")
+            do {
+                try interpreter.copy(data, toInputAt: 0)
+                try interpreter.invoke()
+            } catch let error {
+                log.error("Processing failed with error: \(error.localizedDescription)")
+                self.delegate?.model(self, didFailedProcessing: .process)
+                return
+            }
 
             // 🍉 post process
-            log.debug("Start post-processing 🚀")
+            log.debug("Start post-processing 🍉")
             guard
                 // let outputTensor = try? interpreter.output(at: 0),
                 let output = self.postprocess(data: data)
@@ -154,46 +153,29 @@ class CartoonGanModel {
         height: Int = Constants.Units.Common.height,
         orientation: UIImage.Orientation
     ) -> Data? {
-        // get some data
+        // init helpers
         let size = CGSize(width: width, height: height)
-
-        // create brand new pixel buffer
-        var pixelBuffer: CVPixelBuffer?
-        CVPixelBufferCreate(
-            kCFAllocatorDefault,
-            width,
-            height,
-            kCVPixelFormatType_32ARGB,
-            [
-                kCVPixelBufferCGImageCompatibilityKey: kCFBooleanTrue,
-                kCVPixelBufferCGBitmapContextCompatibilityKey: kCFBooleanTrue
-            ] as CFDictionary,
-            &pixelBuffer
-        )
-        guard let buffer = pixelBuffer else { return nil }
-
-        // lock buffer to write
-        CVPixelBufferLockBaseAddress(buffer, .write)
-        defer { CVPixelBufferUnlockBaseAddress(buffer, .write) }
-
-        // buffer information
-        let bytesPerRow = CVPixelBufferGetBytesPerRow(buffer)
+        let components = 4 // ARGB
+        let bitsPerComponent = 8
+        let bytesPerRow = width * components
         let bytesCount = bytesPerRow * height
-        guard let base = CVPixelBufferGetBaseAddress(buffer)
+
+        // init buffer
+        guard let base = malloc(bytesCount)
         else { return nil }
 
-        // create proper context
+        // create context in buffer
         guard let context = CGContext(
             data: base,
             width: width,
             height: height,
-            bitsPerComponent: 8,
+            bitsPerComponent: bitsPerComponent,
             bytesPerRow: bytesPerRow,
             space: CGColorSpaceCreateDeviceRGB(),
             bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue
         ) else { return nil }
 
-        // fix orientation (keep to .up)
+        // fix orientation ⬆️
         context.concatenate(
             createUpTransformation(
                 orientation,
@@ -201,7 +183,7 @@ class CartoonGanModel {
             )
         )
 
-        // and draw
+        // draw image in context ✍️
         context.draw(
             image,
             in: CGRect(
@@ -210,14 +192,13 @@ class CartoonGanModel {
             )
         )
 
-        // parse byte data!
+        // parse byte data! 👓
         guard let bytes = Array<UInt8>(unsafeData: Data(
             bytes: base,
             count: bytesCount
         )) else { return nil }
 
-        // normalize, remove alpha and convert to float
-        // in a single step!
+        // normalize, remove alpha and convert to float in a single step!
         var normalized = [Float32]()
         for i in 1..<bytesCount {
             if i % 4 == 0 { continue } // ignore first alpha channel
