@@ -1,11 +1,5 @@
 import TensorFlowLite
 
-/**
- TODO:
- - Fix output image size
- - Fix input processing with HEIC
- */
-
 // MARK: - CartoonGanModel Errors
 
 enum CartoonGanModelError: String, Error {
@@ -284,12 +278,10 @@ class CartoonGanModel {
     private func denormalize(_ pixel: Float32) -> UInt8 {
         let bigInt = Int32((pixel + Constants.Units.Output.mean) * Constants.Units.Input.std)
         return UInt8(min(max(bigInt, 0), 255))
-        // UInt8(pixel)
     }
 
     private func normalize(_ pixel: UInt8) -> Float32 {
         (Float32(pixel) - Constants.Units.Input.mean) / Constants.Units.Input.std
-        // Float32(pixel)
     }
 
     // MARK: - Image utils
@@ -299,28 +291,35 @@ class CartoonGanModel {
         size: CGSize
     ) -> CGAffineTransform {
         var transform = CGAffineTransform.identity
+        if case .up = orientation { return transform }
 
         switch orientation {
         case .down, .downMirrored:
             transform = transform.translatedBy(x: size.width, y: size.height)
-            transform = transform.rotated(by: .pi)
+            transform = transform.rotated(by: CGFloat.pi)
+            break
         case .left, .leftMirrored:
             transform = transform.translatedBy(x: size.width, y: 0)
-            transform = transform.rotated(by: .pi * 2)
+            transform = transform.rotated(by: CGFloat.pi / 2.0)
+            break
         case .right, .rightMirrored:
             transform = transform.translatedBy(x: 0, y: size.height)
-            transform = transform.rotated(by: .pi * -2)
-        default: break
+            transform = transform.rotated(by: CGFloat.pi / -2.0)
+            break
+        default:
+            break
         }
 
         switch orientation {
         case .upMirrored, .downMirrored:
             transform.translatedBy(x: size.width, y: 0)
             transform.scaledBy(x: -1, y: 1)
+            break
         case .leftMirrored, .rightMirrored:
             transform.translatedBy(x: size.height, y: 0)
             transform.scaledBy(x: -1, y: 1)
-        default: break
+        default:
+            break
         }
 
         return transform
