@@ -1,5 +1,6 @@
 import AVFoundation
 import Photos
+import SwiftSpinner
 import UIKit
 
 // MARK: - ImagePickerControllerDelegate
@@ -45,15 +46,19 @@ class ImagePickerController: NSObject {
             main { self.delegate?.imagePicker(self, canUseCamera: true) }
             return
         }
-        
+
+        SwiftSpinner.show("Checking camera access")
         AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
+            SwiftSpinner.hide()
             guard let self = self else { return }
             self.main { self.delegate?.imagePicker(self, canUseCamera: granted) }
         }
     }
 
     func photoGalleryAccessRequest() {
+        SwiftSpinner.show("Checking gallery access")
         PHPhotoLibrary.requestAuthorization { [weak self] result in
+            SwiftSpinner.hide()
             guard let self = self else { return }
             self.main { self.delegate?.imagePicker(self, canUseGallery: result == .authorized) }
         }

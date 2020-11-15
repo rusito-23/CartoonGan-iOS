@@ -28,25 +28,31 @@ class CartoonGanModel {
     
     weak var delegate: CartoonGanModelDelegate?
     private var interpreter: Interpreter?
-    private var processing: Bool = false
     private let queue = DispatchQueue(label: Constants.Queue.label)
     
     // MARK: - Constants
     
     private struct Constants {
-        struct Parameters {
-            static let height: Int = 512
-            static let width: Int = 512
-        }
-
         struct File {
             static let name = "cartoongan_int8"
             static let ext = "tflite"
         }
 
-        struct ProcessUnits {
-            static let mean: Float = 127.5
-            static let std: Float = 127.5
+        struct Units {
+            struct Common {
+                static let height: Int = 512
+                static let width: Int = 512
+            }
+
+            struct Input {
+                static let mean: Float32 = 127.5
+                static let std: Float32 = 127.5
+            }
+
+            struct Output {
+                static let mean: Float32 = -1
+                static let std: Float32 = 0.007843
+            }
         }
 
         struct Queue {
@@ -89,34 +95,27 @@ class CartoonGanModel {
 
     // TODO: handle things in queue
     func process(_ image: UIImage) {
-        // prevent double processing
-        guard !processing else {
-            log.info("Already processing...")
-            return
-        }
-        processing = true
-
         // check interpreter
         guard let interpreter = interpreter else {
-            log.info("Interpreter not available")
+            log.error("Interpreter not available")
             delegate?.model(self, didFailedProcessing: .allocation)
             return
         }
 
         // check input image
-        // TODO: check and change orientation
         guard let cgImage = image.cgImage else {
-            log.info("Failed to retrieve cgImage")
+            log.error("Failed to retrieve cgImage")
             delegate?.model(self, didFailedProcessing: .preprocess)
             return
         }
 
         queue.async {
-            defer { self.processing = false }
-
             // 🛠 preprocess
             log.debug("Start pre-processing 🛠")
-            guard let data = self.preprocess(cgImage) else {
+            guard let data = self.preprocess(
+                cgImage,
+                orientation: image.imageOrientation
+            ) else {
                 log.error("Preprocessing failed!")
                 self.delegate?.model(self, didFailedProcessing: .preprocess)
                 return
@@ -137,23 +136,27 @@ class CartoonGanModel {
             log.debug("Start post-processing 🚀")
             guard
                 // let outputTensor = try? interpreter.output(at: 0),
-                let outputImage = self.postprocess(data: data)
+                let output = self.postprocess(data: data)
             else {
-                log.error("Could not retrieve image")
+                log.error("Could not retrieve output image")
                 self.delegate?.model(self, didFailedProcessing: .postprocess)
                 return
             }
 
             log.info("Finished processing image!")
-            self.delegate?.model(self, didFinishProcessing: outputImage)
+            self.delegate?.model(self, didFinishProcessing: output)
         }
     }
 
     private func preprocess(
         _ image: CGImage,
-        width: Int = Constants.Parameters.width,
-        height: Int = Constants.Parameters.height
+        width: Int = Constants.Units.Common.width,
+        height: Int = Constants.Units.Common.height,
+        orientation: UIImage.Orientation
     ) -> Data? {
+        // get some data
+        let size = CGSize(width: width, height: height)
+
         // create brand new pixel buffer
         var pixelBuffer: CVPixelBuffer?
         CVPixelBufferCreate(
@@ -190,25 +193,31 @@ class CartoonGanModel {
             bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue
         ) else { return nil }
 
+        // fix orientation (keep to .up)
+        context.concatenate(
+            createUpTransformation(
+                orientation,
+                size: size
+            )
+        )
+
         // and draw
         context.draw(
             image,
             in: CGRect(
                 origin: .zero,
-                width: width,
-                height: height
+                size: size
             )
         )
 
         // parse byte data!
-        guard let bytes = Array<UInt8>(
-            unsafeData: Data(
-                bytes: base,
-                count: bytesCount
-            )
-        ) else { return nil }
+        guard let bytes = Array<UInt8>(unsafeData: Data(
+            bytes: base,
+            count: bytesCount
+        )) else { return nil }
 
-        // convert to float
+        // normalize, remove alpha and convert to float
+        // in a single step!
         var normalized = [Float32]()
         for i in 1..<bytesCount {
             if i % 4 == 0 { continue } // ignore first alpha channel
@@ -221,8 +230,8 @@ class CartoonGanModel {
 
     private func postprocess(
         data: Data,
-        width: Int = Constants.Parameters.width,
-        height: Int = Constants.Parameters.height
+        width: Int = Constants.Units.Common.width,
+        height: Int = Constants.Units.Common.height
     ) -> UIImage? {
         let floats = data.toArray(type: Float32.self)
 
@@ -275,15 +284,47 @@ class CartoonGanModel {
         return UIImage(cgImage: cgImage)
     }
 
-    func denormalize(_ pixel: Float32) -> UInt8 {
+    private func denormalize(_ pixel: Float32) -> UInt8 {
         // UInt8(pixel) + Constants.ProcessUnits.mean / Constants.ProcessUnits.std
         // TODO: clip
         UInt8(pixel)
     }
 
-    func normalize(_ pixel: UInt8) -> Float32 {
+    private func normalize(_ pixel: UInt8) -> Float32 {
         // (Float32($0) - Constants.ProcessUnits.mean) / Constants.ProcessUnits.std
         Float32(pixel)
+    }
+
+    private func createUpTransformation(
+        _ orientation: UIImage.Orientation,
+        size: CGSize
+    ) -> CGAffineTransform {
+        var transform = CGAffineTransform.identity
+
+        switch orientation {
+        case .down, .downMirrored:
+            transform = transform.translatedBy(x: size.width, y: size.height)
+            transform = transform.rotated(by: .pi)
+        case .left, .leftMirrored:
+            transform = transform.translatedBy(x: size.width, y: 0)
+            transform = transform.rotated(by: .pi * 2)
+        case .right, .rightMirrored:
+            transform = transform.translatedBy(x: 0, y: size.height)
+            transform = transform.rotated(by: .pi * -2)
+        default: break
+        }
+
+        switch orientation {
+        case .upMirrored, .downMirrored:
+            transform.translatedBy(x: size.width, y: 0)
+            transform.scaledBy(x: -1, y: 1)
+        case .leftMirrored, .rightMirrored:
+            transform.translatedBy(x: size.height, y: 0)
+            transform.scaledBy(x: -1, y: 1)
+        default: break
+        }
+
+        return transform
     }
 
 }
@@ -293,16 +334,5 @@ class CartoonGanModel {
 extension CVPixelBufferLockFlags {
     static var write: CVPixelBufferLockFlags {
         CVPixelBufferLockFlags(rawValue: 0)
-    }
-}
-
-// MARK: - CGRect Utils
-
-extension CGRect {
-    init(origin: CGPoint, width: Int, height: Int) {
-        self.init(
-            origin: origin,
-            size: CGSize(width: width, height: height)
-        )
     }
 }
