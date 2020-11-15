@@ -1,5 +1,11 @@
 import TensorFlowLite
 
+/**
+ TODO:
+ - Fix output image size
+ - Fix input processing with HEIC
+ */
+
 // MARK: - CartoonGanModel Errors
 
 enum CartoonGanModelError: String, Error {
@@ -50,8 +56,8 @@ class CartoonGanModel {
             }
 
             struct Output {
-                static let mean: Float32 = -1
-                static let std: Float32 = 0.007843
+                static let mean: Float32 = 1
+                static let std: Float32 = 127.5
             }
 
             struct ARGB {
@@ -120,7 +126,7 @@ class CartoonGanModel {
         queue.async {
             // 🛠 preprocess
             log.debug("Start pre-processing 🛠")
-            guard let data = self.preprocess(
+            guard let inputData = self.preprocess(
                 cgImage,
                 orientation: image.imageOrientation
             ) else {
@@ -132,7 +138,7 @@ class CartoonGanModel {
             // 🚀 pass through the model
             log.debug("Invoke interpreter 🚀")
             do {
-                try interpreter.copy(data, toInputAt: 0)
+                try interpreter.copy(inputData, toInputAt: 0)
                 try interpreter.invoke()
             } catch let error {
                 log.error("Processing failed with error: \(error.localizedDescription)")
@@ -143,8 +149,8 @@ class CartoonGanModel {
             // 🍉 post process
             log.debug("Start post-processing 🍉")
             guard
-                let outputTensor = try? interpreter.output(at: 0),
-                let output = self.postprocess(data: outputTensor.data)
+                 let outputTensor = try? interpreter.output(at: 0),
+                 let output = self.postprocess(data: outputTensor.data)
             else {
                 log.error("Could not retrieve output image")
                 self.delegate?.model(self, didFailedProcessing: .postprocess)
@@ -233,13 +239,9 @@ class CartoonGanModel {
             for y in 0 ..< height {
                 let floatIndex = (y * width + x) * 3
                 let index = (y * width + x) * 4
-                let red = denormalize(floats[floatIndex])
-                let green = denormalize(floats[floatIndex + 1])
-                let blue = denormalize(floats[floatIndex + 2])
-
-                buffer[index] = red
-                buffer[index + 1] = green
-                buffer[index + 2] = blue
+                buffer[index] = denormalize(floats[floatIndex])
+                buffer[index + 1] = denormalize(floats[floatIndex + 1])
+                buffer[index + 2] = denormalize(floats[floatIndex + 2])
                 buffer[index + 3] = 0
             }
         }
@@ -272,12 +274,14 @@ class CartoonGanModel {
     }
 
     private func denormalize(_ pixel: Float32) -> UInt8 {
-        let bigInt = Int32((pixel + Constants.Units.Output.mean) * Constants.Units.Output.std)
-        return UInt8(min(max(bigInt, Int32(UInt8.max)), Int32(UInt8.min)))
+        let bigInt = Int32((pixel + Constants.Units.Output.mean) * Constants.Units.Input.std)
+        return UInt8(min(max(bigInt, 0), 255))
+        // UInt8(pixel)
     }
 
     private func normalize(_ pixel: UInt8) -> Float32 {
         (Float32(pixel) - Constants.Units.Input.mean) / Constants.Units.Input.std
+        // Float32(pixel)
     }
 
     private func createUpTransformation(
