@@ -50,16 +50,13 @@ class CartoonGanModel {
         }
 
         struct Queue {
-            static let label = "com.rusito23.CartoonGan"
+            static let label = "com.rusito23.CartoonGan.serial"
         }
     }
 
     // MARK: - Methods
 
-    func start(
-        name: String,
-        ext: String
-    ) {
+    func start(name: String, ext: String) {
         queue.async {
             guard let modelPath = Bundle.main.path(
                 forResource: name,
@@ -98,7 +95,6 @@ class CartoonGanModel {
             return
         }
         processing = true
-        defer { processing = false }
 
         // check interpreter
         guard let interpreter = interpreter else {
@@ -107,45 +103,56 @@ class CartoonGanModel {
             return
         }
 
-        // 🛠 preprocess
-        guard let data = preprocess(image) else {
-            log.error("Preprocessing failed!")
+        // check input image
+        guard let cgImage = image.cgImage else {
+            log.info("Failed to retrieve cgImage")
             delegate?.model(self, didFailedProcessing: .preprocess)
             return
         }
 
-        // 🚀 pass through the model
-        do {
-            try interpreter.copy(data, toInputAt: 0)
-            try interpreter.invoke()
-        } catch let error {
-            log.error("Processing failed with error: \(error.localizedDescription)")
-            delegate?.model(self, didFailedProcessing: .process)
-            return
-        }
+        queue.async {
+            defer { self.processing = false }
 
-        // 🍉 post process
-        guard
-            let outputTensor = try? interpreter.output(at: 0),
-            let outputImage = postprocess(data: outputTensor.data)
-        else {
-            log.error("Could not retrieve image")
-            delegate?.model(self, didFailedProcessing: .postprocess)
-            return
-        }
+            // 🛠 preprocess
+            guard let data = self.preprocess(cgImage) else {
+                log.error("Preprocessing failed!")
+                self.delegate?.model(self, didFailedProcessing: .preprocess)
+                return
+            }
 
-        log.info("Finished processing image!")
-        delegate?.model(self, didFinishProcessing: outputImage)
+            // 🚀 pass through the model
+            do {
+                try interpreter.copy(data, toInputAt: 0)
+                try interpreter.invoke()
+            } catch let error {
+                log.error("Processing failed with error: \(error.localizedDescription)")
+                self.delegate?.model(self, didFailedProcessing: .process)
+                return
+            }
+
+            // 🍉 post process
+            guard
+                let outputTensor = try? interpreter.output(at: 0),
+                let outputImage = self.postprocess(data: outputTensor.data)
+            else {
+                log.error("Could not retrieve image")
+                self.delegate?.model(self, didFailedProcessing: .postprocess)
+                return
+            }
+
+            log.info("Finished processing image!")
+            self.delegate?.model(self, didFinishProcessing: outputImage)
+        }
     }
 
     private func preprocess(
-        _ image: UIImage,
+        _ image: CGImage,
         width: Int = Constants.Parameters.width,
         height: Int = Constants.Parameters.height
     ) -> Data? {
         // resize and get image buffer
         guard
-            let cgImage = image.cgImage?.resized(width: width, height: height),
+            let cgImage = image.resized(width: width, height: height),
             var buffer = try? vImage_Buffer(cgImage: cgImage)
         else {
             log.debug("ERROR: Failed to get input cgImage")
