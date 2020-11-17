@@ -101,7 +101,6 @@ class CartoonGanModel {
         )
     }
 
-    // TODO: handle things in queue
     func process(_ image: UIImage) {
         // check interpreter
         guard let interpreter = interpreter else {
@@ -163,8 +162,8 @@ class CartoonGanModel {
         orientation: UIImage.Orientation
     ) -> Data? {
         // init buffer
-        guard let base = malloc(Constants.Units.ARGB.bytesCount)
-        else { return nil }
+        guard let base = malloc(Constants.Units.ARGB.bytesCount) else { return nil }
+        defer { free(base) }
 
         // create context with buffer 🥽
         guard let context = CGContext(
@@ -186,13 +185,8 @@ class CartoonGanModel {
         )
 
         // draw image in context ✍️
-        context.draw(
-            image,
-            in: CGRect(
-                origin: .zero,
-                size: Constants.Units.Common.size
-            )
-        )
+        context.draw(image, in: CGRect(origin: .zero, size: Constants.Units.Common.size))
+
         // parse byte data! 👓
         guard let bytes = Array<UInt8>(unsafeData: Data(
             bytes: base,
@@ -201,7 +195,7 @@ class CartoonGanModel {
 
         // normalize, remove alpha and convert to float in a single step!
         var normalized = [Float32]()
-        for i in 1..<Constants.Units.ARGB.bytesCount {
+        for i in 1 ..< Constants.Units.ARGB.bytesCount {
             if i % 4 == 0 { continue } // ignore first alpha channel
             normalized.append(normalize(bytes[i]))
         }
@@ -217,16 +211,11 @@ class CartoonGanModel {
         to originalSize: CGSize
     ) -> UIImage? {
         // read output as float array
-        let floats = data.toArray(type: Float32.self)
+        let output = data.toArray(type: Float32.self)
 
         // allocate target buffer
-        let pointer = UnsafeMutablePointer<UInt8>.allocate(
-            capacity: Constants.Units.ARGB.bytesCount
-        )
-        let buffer = UnsafeMutableBufferPointer<UInt8>(
-            start: pointer,
-            count: Constants.Units.ARGB.bytesCount
-        )
+        let pointer = UnsafeMutablePointer<UInt8>.allocate(capacity: Constants.Units.ARGB.bytesCount)
+        let buffer = UnsafeMutableBufferPointer<UInt8>(start: pointer, count: Constants.Units.ARGB.bytesCount)
         defer { pointer.deallocate() }
 
         // de normalize and add empty alpha channel
@@ -234,18 +223,16 @@ class CartoonGanModel {
             for y in 0 ..< height {
                 let floatIndex = (y * width + x) * 3
                 let index = (y * width + x) * 4
-                buffer[index] = denormalize(floats[floatIndex])
-                buffer[index + 1] = denormalize(floats[floatIndex + 1])
-                buffer[index + 2] = denormalize(floats[floatIndex + 2])
+                buffer[index] = denormalize(output[floatIndex])
+                buffer[index + 1] = denormalize(output[floatIndex + 1])
+                buffer[index + 2] = denormalize(output[floatIndex + 2])
                 buffer[index + 3] = 0
             }
         }
 
         // construct image with data
         guard
-            let imageDataProvider = CGDataProvider(
-                data: Data(buffer: buffer) as CFData
-            ),
+            let dataProvider = CGDataProvider(data: Data(buffer: buffer) as CFData),
             let cgImage = CGImage(
                 width: width,
                 height: height,
@@ -253,10 +240,8 @@ class CartoonGanModel {
                 bitsPerPixel: Constants.Units.ARGB.bitsPerPixel,
                 bytesPerRow: Constants.Units.ARGB.bytesPerRow,
                 space: CGColorSpaceCreateDeviceRGB(),
-                bitmapInfo: CGBitmapInfo(
-                    rawValue: CGImageAlphaInfo.noneSkipLast.rawValue
-                ).union(.byteOrder32Big),
-                provider: imageDataProvider,
+                bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue),
+                provider: dataProvider,
                 decode: nil,
                 shouldInterpolate: false,
                 intent: .defaultIntent
@@ -276,12 +261,12 @@ class CartoonGanModel {
     // MARK: - Normalization
 
     private func denormalize(_ pixel: Float32) -> UInt8 {
-        let bigInt = Int32((pixel + Constants.Units.Output.mean) * Constants.Units.Input.std)
-        return UInt8(min(max(bigInt, 0), 255))
+        let bigInt = Int32((pixel + Constants.Units.Output.mean) * Constants.Units.Input.std) // normalize
+        return UInt8(min(max(bigInt, 0), 255)) // clip
     }
 
     private func normalize(_ pixel: UInt8) -> Float32 {
-        (Float32(pixel) - Constants.Units.Input.mean) / Constants.Units.Input.std
+        (Float32(pixel) - Constants.Units.Input.mean) / Constants.Units.Input.std // normalize
     }
 
     // MARK: - Image utils
@@ -326,44 +311,18 @@ class CartoonGanModel {
     }
 
     private func resize(_ image: CGImage, to size: CGSize) -> CGImage? {
-        let imageWidth = Float(image.width)
-        let imageHeight = Float(image.height)
-        let maxWidth = Float(size.width)
-        let maxHeight = Float(size.height)
-
-        // get ratio (landscape or portrait)
-        var ratio: Float = imageWidth > imageHeight ?
-            maxWidth / imageWidth : maxHeight / imageHeight
-
-        // calculate new size
-        if ratio > 1 { ratio = 1 }
-        let width = imageWidth * ratio
-        let height = imageHeight * ratio
-
-        // create context
         guard let colorSpace = image.colorSpace else { return nil }
         guard let context = CGContext(
-                data: nil,
-                width: Int(width),
-                height: Int(height),
-                bitsPerComponent: image.bitsPerComponent,
-                bytesPerRow: image.bytesPerRow,
-                space: colorSpace,
-                bitmapInfo: image.alphaInfo.rawValue
+            data: nil,
+            width: Int(size.width),
+            height: Int(size.height),
+            bitsPerComponent: image.bitsPerComponent,
+            bytesPerRow: Int(size.width) * image.bitsPerComponent * 4,
+            space: colorSpace,
+            bitmapInfo: image.alphaInfo.rawValue
         ) else { return nil }
-
-        // draw image to context (resizing it)
         context.interpolationQuality = .high
-        context.draw(
-            image,
-            in: CGRect(
-                x: .zero, y: .zero,
-                width: Int(width),
-                height: Int(height)
-            )
-        )
-
-        // extract resulting image from context
+        context.draw(image, in: CGRect(origin: .zero, size: size))
         return context.makeImage()
     }
 
