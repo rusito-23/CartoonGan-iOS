@@ -218,15 +218,16 @@ class CartoonGanModel {
         let buffer = UnsafeMutableBufferPointer<UInt8>(start: pointer, count: Constants.Units.ARGB.bytesCount)
         defer { pointer.deallocate() }
 
-        // de normalize and add empty alpha channel
-        for x in 0 ..< width {
-            for y in 0 ..< height {
-                let floatIndex = (y * width + x) * 3
-                let index = (y * width + x) * 4
+        // parse floats into uint8s
+        var floatIndex = 0
+        for index in 0 ..< Constants.Units.ARGB.bytesCount {
+            if index % 4 == 0 {
+                // set empty alpha channel
+                buffer[index] = 0
+            } else {
+                // denormalize color channels
                 buffer[index] = denormalize(output[floatIndex])
-                buffer[index + 1] = denormalize(output[floatIndex + 1])
-                buffer[index + 2] = denormalize(output[floatIndex + 2])
-                buffer[index + 3] = 0
+                floatIndex += 1
             }
         }
 
@@ -240,7 +241,7 @@ class CartoonGanModel {
                 bitsPerPixel: Constants.Units.ARGB.bitsPerPixel,
                 bytesPerRow: Constants.Units.ARGB.bytesPerRow,
                 space: CGColorSpaceCreateDeviceRGB(),
-                bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue),
+                bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipFirst.rawValue),
                 provider: dataProvider,
                 decode: nil,
                 shouldInterpolate: false,
@@ -251,8 +252,10 @@ class CartoonGanModel {
         }
 
         // keep original size
-        guard let resizedImage = resize(cgImage, to: originalSize)
-        else { return nil }
+        guard let resizedImage = resize(
+            cgImage,
+            to: originalSize
+        ) else { return nil }
 
         // extract resulting image from context
         return UIImage(cgImage: resizedImage)
