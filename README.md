@@ -1,5 +1,5 @@
-# CartoonGan for iOS with TensorFlow Lite
 
+<h1 align='center'>CartoonGan for iOS with TensorFlow Lite</h1>
 <p align='center'>
 <img src='CartoonGan/Assets.xcassets/AppIcon.appiconset/1024.png' height='256px' />
 </p>
