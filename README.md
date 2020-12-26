@@ -2,18 +2,22 @@
 
 <p align='center'>
 <img src='CartoonGan/Assets.xcassets/AppIcon.appiconset/1024.png' height='256px' />
-<div>Icon designed by <a href='https://www.flaticon.es/autores/freepik' title='Freepik'>Freepik</a> from <a href='https://www.flaticon.es/' title='Flaticon'>www.flaticon.es</a></div>
+</p>
+<p align='center'>
+Icon designed by <a href='https://www.flaticon.es/autores/freepik' title='Freepik'>Freepik</a> from <a href='https://www.flaticon.es/' title='Flaticon'>www.flaticon.es</a>
 </p>
 
 The **CartoonGan** model can be found in [tfhub](https://tfhub.dev/sayakpaul/lite-model/cartoongan/dr/1) and was developed by [Sayak Paul](https://tfhub.dev/sayakpaul). In this repo we build an iOS application to perform the cartoonization with an iPhone.
 
 ## Screenshots
 
-| Main Screen | Original 1 | Original 2 |
-| --- | --- | --- |
-| [Main Screen](./Demo/main_screen.png) | [Original 1](./Demo/original_1.PNG) | [Original 2](./Demo/original_2.PNG) |
-| **Loading screen** | **Cartoon 1** | **Original 2** |
-| [Loading Screen](./Demo/loading_screen.PNG.png) | [Cartoon 1](./Demo/cartoon_1.PNG) | [Cartoon 2](./Demo/cartoon_2.PNG) |
+| Original 1 | Original 2 |
+| --- | --- |
+| ![Original 1](./Demo/original_1.PNG) | ![Original 2](./Demo/original_2.PNG) |
+| **Cartoon 1** | **Original 2** |
+| ![Cartoon 1](./Demo/cartoon_1.PNG) | ![Cartoon 2](./Demo/cartoon_2.PNG) |
+| **Main Screen** | **Loading Screen** |
+| ![Main Screen](./Demo/main_screen.PNG) | ![Loading Screen](./Demo/loading_screen.PNG) |
 
 ## Objectives
 
