@@ -1,6 +1,6 @@
 import UIKit
 
-class CartoonViewController: UIViewController {
+final class CartoonViewController: UIViewController {
 
     // MARK: - Properties
 

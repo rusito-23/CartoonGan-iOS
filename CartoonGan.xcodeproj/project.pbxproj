@@ -23,7 +23,7 @@
 		78FBA343255D7BCB003EC30F /* UIImage+Symbols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FBA342255D7BCB003EC30F /* UIImage+Symbols.swift */; };
 		78FBA359255D9644003EC30F /* ErrorDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FBA358255D9644003EC30F /* ErrorDialog.swift */; };
 		78FBA35E255DAC40003EC30F /* PopUpDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FBA35D255DAC40003EC30F /* PopUpDialog.swift */; };
-		78FBA37C255DF803003EC30F /* UIView+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FBA37B255DF803003EC30F /* UIView+Helpers.swift */; };
+		78FBA37C255DF803003EC30F /* UIView+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FBA37B255DF803003EC30F /* UIView+Utils.swift */; };
 		78FBA37F255E0091003EC30F /* Data+Array+Convert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FBA37E255E0091003EC30F /* Data+Array+Convert.swift */; };
 		E7CAD67B2041FD164A4998C9 /* Pods_CartoonGan.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8D0FD092D6C74887B871520 /* Pods_CartoonGan.framework */; };
 /* End PBXBuildFile section */
@@ -48,7 +48,7 @@
 		78FBA342255D7BCB003EC30F /* UIImage+Symbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Symbols.swift"; sourceTree = "<group>"; };
 		78FBA358255D9644003EC30F /* ErrorDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorDialog.swift; sourceTree = "<group>"; };
 		78FBA35D255DAC40003EC30F /* PopUpDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpDialog.swift; sourceTree = "<group>"; };
-		78FBA37B255DF803003EC30F /* UIView+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Helpers.swift"; sourceTree = "<group>"; };
+		78FBA37B255DF803003EC30F /* UIView+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Utils.swift"; sourceTree = "<group>"; };
 		78FBA37E255E0091003EC30F /* Data+Array+Convert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Array+Convert.swift"; sourceTree = "<group>"; };
 		968E9615254DE1B4F4D51D29 /* Pods-CartoonGan.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CartoonGan.release.xcconfig"; path = "Target Support Files/Pods-CartoonGan/Pods-CartoonGan.release.xcconfig"; sourceTree = "<group>"; };
 		E8D0FD092D6C74887B871520 /* Pods_CartoonGan.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CartoonGan.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -95,7 +95,7 @@
 				7814D070255CA0CB009D4571 /* Model */,
 				7814D064255C9E91009D4571 /* Delegates */,
 				7814D074255CA0EC009D4571 /* View */,
-				7814D063255C9E80009D4571 /* ViewController */,
+				7814D063255C9E80009D4571 /* Controller */,
 				7814D05F255C9E5C009D4571 /* Support Files */,
 			);
 			path = CartoonGan;
@@ -111,14 +111,14 @@
 			name = "Support Files";
 			sourceTree = "<group>";
 		};
-		7814D063255C9E80009D4571 /* ViewController */ = {
+		7814D063255C9E80009D4571 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
 				7814D066255C9FDB009D4571 /* ViewController.swift */,
 				78FBA32A255CA6E0003EC30F /* ImagePickerController.swift */,
 				780CE6272561D11A0008DF1A /* CartoonViewController.swift */,
 			);
-			path = ViewController;
+			path = Controller;
 			sourceTree = "<group>";
 		};
 		7814D064255C9E91009D4571 /* Delegates */ = {
@@ -150,6 +150,8 @@
 		78FBA325255CA3D7003EC30F /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				78FBA342255D7BCB003EC30F /* UIImage+Symbols.swift */,
+				78FBA37B255DF803003EC30F /* UIView+Utils.swift */,
 				78FBA326255CA3E2003EC30F /* Fonts.swift */,
 			);
 			path = UI;
@@ -175,8 +177,6 @@
 		78FBA341255D7BBB003EC30F /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				78FBA342255D7BCB003EC30F /* UIImage+Symbols.swift */,
-				78FBA37B255DF803003EC30F /* UIView+Helpers.swift */,
 				78FBA37E255E0091003EC30F /* Data+Array+Convert.swift */,
 			);
 			path = Extensions;
@@ -321,7 +321,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				78FBA37C255DF803003EC30F /* UIView+Helpers.swift in Sources */,
+				78FBA37C255DF803003EC30F /* UIView+Utils.swift in Sources */,
 				78FBA32B255CA6E0003EC30F /* ImagePickerController.swift in Sources */,
 				78FBA337255CABB4003EC30F /* SwiftyBeaver.swift in Sources */,
 				78FBA359255D9644003EC30F /* ErrorDialog.swift in Sources */,

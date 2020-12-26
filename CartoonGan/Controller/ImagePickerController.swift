@@ -15,7 +15,7 @@ protocol ImagePickerControllerDelegate: class {
 
 // MARK: - ImagePickerController
 
-class ImagePickerController: NSObject {
+final class ImagePickerController: NSObject {
 
     // MARK: - Properties
 

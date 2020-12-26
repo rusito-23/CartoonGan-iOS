@@ -1,6 +1,6 @@
 import PopupDialog
 
-class ErrorDialog {
+final class ErrorDialog {
 
     // MARK: - Properties
 

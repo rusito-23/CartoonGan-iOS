@@ -1,7 +1,7 @@
 import UIKit
 
 @available(iOS 13.0, *)
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     // MARK: - Instance Properties
 

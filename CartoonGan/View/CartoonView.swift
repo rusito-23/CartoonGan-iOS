@@ -1,6 +1,6 @@
 import UIKit
 
-class CartoonView: UIView {
+final class CartoonView: UIView {
 
     // MARK: - Subviews
 

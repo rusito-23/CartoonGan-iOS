@@ -3,7 +3,7 @@ import SwiftyBeaver
 import PopupDialog
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     
     // MARK: - Instance Properties
     

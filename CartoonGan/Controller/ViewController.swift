@@ -1,7 +1,7 @@
 import UIKit
 import SwiftSpinner
 
-class ViewController: UIViewController {
+final class ViewController: UIViewController {
     
     // MARK: - Properties
 

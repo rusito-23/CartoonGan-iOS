@@ -21,7 +21,7 @@ protocol CartoonGanModelDelegate: NSObject {
 
 // MARK: - CartoonGanModel
 
-class CartoonGanModel {
+final class CartoonGanModel {
     
     // MARK: - Properties
     
