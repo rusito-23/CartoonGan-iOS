@@ -1,0 +1,40 @@
+PODS:
+  - DynamicBlurView (4.1.0)
+  - PopupDialog (1.1.1):
+    - DynamicBlurView (~> 4.0)
+  - SwiftSpinner (2.1.0)
+  - SwiftyBeaver (1.9.3)
+  - TensorFlowLiteC (2.3.0):
+    - TensorFlowLiteC/Core (= 2.3.0)
+  - TensorFlowLiteC/Core (2.3.0)
+  - TensorFlowLiteSwift (2.3.0):
+    - TensorFlowLiteSwift/Core (= 2.3.0)
+  - TensorFlowLiteSwift/Core (2.3.0):
+    - TensorFlowLiteC (= 2.3.0)
+
+DEPENDENCIES:
+  - PopupDialog (~> 1.1)
+  - SwiftSpinner
+  - SwiftyBeaver
+  - TensorFlowLiteSwift (~> 2.3.0)
+
+SPEC REPOS:
+  trunk:
+    - DynamicBlurView
+    - PopupDialog
+    - SwiftSpinner
+    - SwiftyBeaver
+    - TensorFlowLiteC
+    - TensorFlowLiteSwift
+
+SPEC CHECKSUMS:
+  DynamicBlurView: 58e18fae80bb614e34681a4486870e7d257b62e8
+  PopupDialog: 720c92befd8bc23c13442254945213db5612f149
+  SwiftSpinner: 0f15c006307f8d8bbac075638927ec1361b565d7
+  SwiftyBeaver: 2e8acd6fc90c6d0a27055867a290794926d57c02
+  TensorFlowLiteC: 51f50caf5777f740a70e2c1a5dbdc149e7aeb50b
+  TensorFlowLiteSwift: fb152cc1eec36b25b03a23c07f5d58113170af58
+
+PODFILE CHECKSUM: 698d1f90445b48b07b19be7f1f872f9b4c64ac5c
+
+COCOAPODS: 1.8.4
